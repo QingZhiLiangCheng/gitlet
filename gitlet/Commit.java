@@ -1,26 +1,80 @@
 package gitlet;
 
-// TODO: any imports you need here
+import java.io.File;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
 
-import java.util.Date; // TODO: You'll likely use this in this class
 
-/** Represents a gitlet commit object.
- *  TODO(QingZhiLiangCheng): It's a good idea to give a description here of what else this Class
- *  does at a high level.
+/**
+ * Represents a gitlet commit object.
+ *  TODO(QingZhiLiangCheng): implement Commit
  *
- *  @author QingZhiLiangCheng
+ * @author QingZhiLiangCheng
+ * @since 2025-05-10
  */
-public class Commit {
+public class Commit implements Serializable {
+
     /**
-     * TODO(QingZhiLiangCheng): add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
+     * TODO(QingZhiLiangCheng): 选择合适的数据结构和成员变量
+     */
+    private String id;
+    private String message;
+    private Timestamp timestamp;
+    private List<String> parents;
+    private HashMap<String, String> blogMap;
+
+
+    /**
+     * TODO(ChengShi) 实现初始提交 <br>
+     * 初始提交要求<br>
+     * message: "inital commit"<br>
+     * timestamp: "(Unix)纪元" 即 00:00:00 UTC, Thursday, 1 January 1970
+     * id {@link #toSha1()}
+     */
+    public Commit() {
+
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng) 提交构造函数
+     * @param message
+     * @param timestamp
+     * @param directParent
+     * @param blobFilename
+     * @param blobId
+     */
+    public Commit(String message,
+                  Timestamp timestamp,
+                  String directParent,
+                  String blobFilename,
+                  String blobId) {
+
+    }
+
+    /**
+     * TODO(ChengShi) getter setter方法<br>
+     * 用注解也行 生成也行
      */
 
-    /** The message of this Commit. */
-    private String message;
+    /**
+     * TODO(QingZhiLiangCheng): 保存commit
+     * 将id保存至 `.gitlet/objects/commit/id`
+     * {@link Utils#writeObject(File, Serializable)}
+     */
+    public void saveCommit() {
 
-    /* TODO(QingZhiLiangCheng): fill in the rest of this class. */
+    }
+
+    /**
+     * TODO(ChengShi) toSha1方法 <br>
+     * 将message和TimeStamp混合哈希<br>
+     * sha1函数在Utils类中提供好了
+     */
+    public String toSha1() {
+        return null;
+    }
+
+
 }
