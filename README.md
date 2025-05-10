@@ -42,9 +42,9 @@ java gitlet.Main init # 初始化gitlet仓库
 ```
 
 ## Gitlet Design Document
+![gitlet init1.png](note%2Fattachment%2Fgitlet%20init1.png)
 
 ![gitlet add1.png](note%2Fattachment%2Fgitlet%20add1.png)
 
 ![gitlet commit1.png](note%2Fattachment%2Fgitlet%20commit1.png)
 
-![gitlet init1.png](note%2Fattachment%2Fgitlet%20init1.png)

@@ -86,7 +86,7 @@ public class Repository {
 
     /**
      * TODO(QingZhiLiangCheng): init<br>
-     * 架构图在`/note/.md`中都画好了<br>
+     * 架构图在`READEME.md`中都画好了<br>
      * 如果存在.gitlet 视为错误 退出程序 打印错误信息<br>
      * "A Gitlet version-control system already exists in the current directory."<br>
      * 创建各个文件夹{@link #createInitDir()}<br>

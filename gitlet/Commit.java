@@ -23,7 +23,7 @@ public class Commit implements Serializable {
     private String message;
     private Timestamp timestamp;
     private List<String> parents;
-    private HashMap<String, String> blogMap;
+    private HashMap<String, String> blobMap;
 
 
     /**
