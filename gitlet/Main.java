@@ -21,7 +21,7 @@ public class Main {
             case "init":
                 /*
                  * TODO(QingZhiLiangCheng: init): 处理 `init` 命令
-                 * 架构图在`/note/.md`中都画好了
+                 * 架构图在`notes/gitlet.md`中都画好了
                  * 如果存在.gitlet 视为错误 退出程序 打印错误信息
                  * "A Gitlet version-control system already exists in the current directory."
                  * 创建各个文件夹
