@@ -113,8 +113,24 @@ public class Repository {
         createInitDir();
         Commit initCommit = new Commit();
         initCommit.saveCommit();
-       /* initReference(initCommit.getID());*/
+        /* initReference(initCommit.getID());*/
     }
+
+    /**
+     * TODO(QingZhiLiangCheng) add command<br>
+     * <p>
+     * 1.文件名是空？<br>
+     * 2.工作目录中不存在此文件？<br>
+     * 3.如果文件已经被track 具体表现为与blobMap中的文件名一样<br>
+     * 3.1 内容一致: 不需要纳入暂存区(确保add区和remove区都没有）<br>
+     * 3.2 内容不一致: 加入暂存区<br>
+     *
+     * @param addFileName 提交的文件名
+     */
+    public void add(String addFileName) {
+
+    }
+
 
     /**
      * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>

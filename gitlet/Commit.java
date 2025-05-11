@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
-import static gitlet.Utils.writeObject;
+import static gitlet.Utils.*;
 
 
 /**
@@ -79,6 +79,16 @@ public class Commit implements Serializable {
      */
     public String toSha1() {
         return null;
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng) 获取commit文件
+     * @param id commit id
+     * @return commit文件
+     */
+    public static Commit getCommit(String id){
+        File commitFile = join(Repository.COMMIT_DIR,id);
+        return readObject(commitFile, Commit.class);
     }
 
 

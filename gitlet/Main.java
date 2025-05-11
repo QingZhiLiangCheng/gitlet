@@ -20,7 +20,7 @@ public class Main {
             return;
         }
         String firstArg = args[0];
-        Repository repository;
+        Repository repository= new Repository();
         switch (firstArg) {
             case "init":
                 /*
@@ -33,13 +33,13 @@ public class Main {
                  * 创建初始 Branch -- master
                  * 创建头 HEAD
                  */
-                repository = new Repository();
                 repository.init();
                 break;
             case "add":
                 /*
                  * TODO(QingZhiLiangCheng: add): 处理 `add [filename]` 命令
                  */
+                repository.add(args[1]);
                 break;
             case "commit":
                 // TODO(QingZhiLiangCheng): 处理 `commit [message]` 命令

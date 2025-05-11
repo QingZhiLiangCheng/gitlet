@@ -6,7 +6,7 @@ import java.io.Serializable;
 import static gitlet.Utils.*;
 
 /**
- * TODO[Completed on 2025-05-10](QingZhiLiangCheng): add and create Branch pointer.
+ * TODO(QingZhiLiangCheng): add and create Branch pointer.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
