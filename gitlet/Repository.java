@@ -1,8 +1,10 @@
 package gitlet;
 
+
 import java.io.File;
 
 import static gitlet.Utils.*;
+import static java.lang.System.exit;
 
 
 /**
@@ -49,8 +51,8 @@ public class Repository {
      * 包含commits 和 blogs
      */
     public static File OBJECTS_DIR;
-    public static File COMMIT_FOLDER;
-    public static File BLOGS_FOLDER;
+    public static File COMMIT_DIR;
+    public static File BLOBS_DIR;
 
     /**
      * the refs directory.<br>
@@ -68,24 +70,33 @@ public class Repository {
     public static File REMOVE_STAGE_DIR;
 
     /**
-     * TODO(QingZhiLiangCheng): 构造函数<br>
+     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
      * 创建CWD<br>
      * 然后调用 {@link #configDIRS()}
      */
     public Repository() {
-
+        CWD = new File(System.getProperty("user.dir"));
+        configDIRS();
     }
 
     /**
-     * TODO(QingZhiLiangCheng): config directory
+     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): config directory
      * 配置好每个文件夹的位置
      */
     private void configDIRS() {
-
+        GITLET_DIR = join(CWD, ".gitlet");
+        OBJECTS_DIR = join(GITLET_DIR, "objects");
+        COMMIT_DIR = join(OBJECTS_DIR, "commits");
+        BLOBS_DIR = join(OBJECTS_DIR, "blobs");
+        REFS_DIR = join(GITLET_DIR, "refs");
+        HEADS_DIR = join(REFS_DIR, "heads");
+        HEAD_POINT = join(REFS_DIR, "HEAD");
+        ADD_STAGE_DIR = join(GITLET_DIR, "addstage");
+        REMOVE_STAGE_DIR = join(GITLET_DIR, "removestage");
     }
 
     /**
-     * TODO(QingZhiLiangCheng): init<br>
+     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
      * 架构图在`READEME.md`中都画好了<br>
      * 如果存在.gitlet 视为错误 退出程序 打印错误信息<br>
      * "A Gitlet version-control system already exists in the current directory."<br>
@@ -94,15 +105,30 @@ public class Repository {
      * 存储commit {@link Commit#saveCommit()}<br>
      * 创建master和HEAD {@link #initReference(String)} ()}<br>
      */
-    public static void init() {
-
+    public void init() {
+        if (GITLET_DIR.exists()) {
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            exit(0);
+        }
+        createInitDir();
+        Commit initCommit = new Commit();
+        initCommit.saveCommit();
+       /* initReference(initCommit.getID());*/
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 创建目录结构<br>
+     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
      */
-    public void createInitDir() {
-
+    public static void createInitDir() {
+        GITLET_DIR.mkdirs();
+        OBJECTS_DIR.mkdirs();
+        COMMIT_DIR.mkdirs();
+        BLOBS_DIR.mkdirs();
+        REFS_DIR.mkdirs();
+        HEADS_DIR.mkdirs();
+        HEAD_POINT.mkdirs();
+        ADD_STAGE_DIR.mkdirs();
+        REMOVE_STAGE_DIR.mkdirs();
     }
 
 
@@ -115,7 +141,7 @@ public class Repository {
      *
      * @param commitId commitID
      */
-    private void initReference(String commitId) {
+    private static void initReference(String commitId) {
 
     }
 

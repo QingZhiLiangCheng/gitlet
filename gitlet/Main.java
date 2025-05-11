@@ -1,6 +1,5 @@
 package gitlet;
 
-import static gitlet.Repository.init;
 
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
@@ -15,12 +14,17 @@ public class Main {
      * <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) {
-        // TODO(QingZhiLiangCheng): what if args is empty?
+        // TODO[Completed on 2025-05-11](QingZhiLiangCheng): what if args is empty?
+        if (args.length == 0) {
+            System.out.println("Please enter a command.");
+            return;
+        }
         String firstArg = args[0];
+        Repository repository;
         switch (firstArg) {
             case "init":
                 /*
-                 * TODO(QingZhiLiangCheng: init): 处理 `init` 命令
+                 * TODO[Completed on 2025-05-11](QingZhiLiangCheng: init): 处理 `init` 命令
                  * 架构图在`notes/gitlet.md`中都画好了
                  * 如果存在.gitlet 视为错误 退出程序 打印错误信息
                  * "A Gitlet version-control system already exists in the current directory."
@@ -29,7 +33,8 @@ public class Main {
                  * 创建初始 Branch -- master
                  * 创建头 HEAD
                  */
-                init();
+                repository = new Repository();
+                repository.init();
                 break;
             case "add":
                 /*
@@ -60,7 +65,10 @@ public class Main {
             case "rm-branch":
                 // TODO(QingZhiLiangCheng): 处理 `rm-branch [branch name]` 命令
                 break;
-            // TODO(QingZhiLiangCheng): FILL THE REST IN
+            // TODO(QingZhiLiangCheng)[Completed on 2025-05-11]: NO command
+            default:
+                System.out.println("No command with that name exists.");
+                break;
         }
     }
 }

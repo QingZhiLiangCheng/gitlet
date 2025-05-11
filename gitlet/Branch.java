@@ -6,7 +6,7 @@ import java.io.Serializable;
 import static gitlet.Utils.*;
 
 /**
- * TODO(QingZhiLiangCheng): add and create Branch pointer.
+ * TODO[Completed on 2025-05-10](QingZhiLiangCheng): add and create Branch pointer.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -15,7 +15,7 @@ public class Branch extends Pointer {
     private final String branchName;
 
     /**
-     * TODO(QingZhiLiangCheng) Branch构造方法
+     * TODO[Completed on 2025-05-10](QingZhiLiangCheng) Branch构造方法
      *
      * @param id         commitID
      * @param branchName branch name
@@ -26,7 +26,8 @@ public class Branch extends Pointer {
     }
 
     /**
-     * TODO(QingZhiLiangCheng) store branch <br>
+     * TODO[Completed on 2025-05-10](QingZhiLiangCheng) store branch <br>
+     * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
      * 写入 `.gitlet/refs/heads/master` {@link Utils#writeObject(File, Serializable)}<br>
      * 写入 File地址为 join(HEADS_DIR,branchName)
      */

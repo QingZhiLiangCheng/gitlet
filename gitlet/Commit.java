@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 
+import static gitlet.Utils.writeObject;
+
 
 /**
  * Represents a gitlet commit object.
@@ -18,6 +20,7 @@ public class Commit implements Serializable {
 
     /**
      * TODO(QingZhiLiangCheng): 选择合适的数据结构和成员变量
+     * FIXME(QingZhiLiangCheng): 对于parents成员变量的类型 有疑问 需进一步考察
      */
     private String id;
     private String message;
@@ -59,12 +62,14 @@ public class Commit implements Serializable {
      */
 
     /**
-     * TODO(QingZhiLiangCheng): 保存commit
+     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 保存commit
+     * FIXME(QingZhiLiangCheng): 要不要构建动态哈希表 更快的找CommitID？
      * 将id保存至 `.gitlet/objects/commit/id`
      * {@link Utils#writeObject(File, Serializable)}
      */
     public void saveCommit() {
-
+        File commitFile = new File(Repository.COMMIT_DIR,id);
+        writeObject(commitFile,this);
     }
 
     /**

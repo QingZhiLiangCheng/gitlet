@@ -3,7 +3,7 @@ package gitlet;
 import java.io.Serializable;
 
 /**
- * TODO(QingZhiLiangCheng): add Pointer class.
+ * TODO[Completed on 2025-05-10](QingZhiLiangCheng): add Pointer class.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10

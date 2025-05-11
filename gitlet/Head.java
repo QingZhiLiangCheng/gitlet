@@ -7,7 +7,7 @@ import static gitlet.Utils.writeContents;
 import static gitlet.Utils.writeObject;
 
 /**
- * TODO(QingZhiLiangCheng): add and create Head pointer.
+ * TODO[Completed on 2025-05-10](QingZhiLiangCheng): add and create Head pointer.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -18,7 +18,8 @@ public class Head extends Pointer {
     }
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * TODO[Completed on 2025-05-10](QingZhiLiangCheng)
+     * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
      * 写入HEAD_POINT {@link Utils#writeObject(File, Serializable)}
      */
     public void score() {
