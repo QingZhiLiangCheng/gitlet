@@ -113,7 +113,7 @@ public class Repository {
         createInitDir();
         Commit initCommit = new Commit();
         initCommit.saveCommit();
-        /* initReference(initCommit.getID());*/
+        /* initReference(initCommit.getId());*/
     }
 
     /**
@@ -150,9 +150,9 @@ public class Repository {
 
     /**
      * TODO(ChengShi) 创建master和HEAD<br>
-     * 创建Branch master {@link Branch#Branch(String, String)}<br>
+     * 创建Branch master 指向init commit{@link Branch#Branch(String, String)}<br>
      * 写入.gitlet/refs/haeds/master {@link Branch#store()}<br>
-     * 创建HEAD {@link Head#Head(String)}<br>
+     * 创建HEAD 指向init commit {@link Head#Head(String)}<br>
      * 写入.gitlet/HEAD {@link Head#score()}<br>
      *
      * @param commitId commitID
