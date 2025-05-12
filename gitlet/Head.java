@@ -23,7 +23,8 @@ public class Head extends Pointer {
      * 写入HEAD_POINT {@link Utils#writeObject(File, Serializable)}
      */
     public void score() {
-        writeObject(Repository.HEAD_POINT, this);
+        File path = join(Repository.HEAD_POINT,"HEAD");
+        writeObject(path, this);
     }
 
 }

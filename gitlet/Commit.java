@@ -86,7 +86,7 @@ public class Commit implements Serializable {
     public Commit() {
         message="inital commit";
         timestamp=new Timestamp(0);
-        id=sha1(message,timestamp);
+        id=sha1(message,timestamp.toString());
     }
 
     /**
@@ -117,13 +117,6 @@ public class Commit implements Serializable {
         File commitFile = new File(Repository.COMMIT_DIR,id);
         writeObject(commitFile,this);
     }
-
-    /**
-     * TODO(ChengShi) toSha1方法 <br>
-     * 将message和TimeStamp混合哈希<br>
-     * sha1函数在Utils类中提供好了
-     */
-
 
     /**
      * TODO(QingZhiLiangCheng) 获取commit文件
