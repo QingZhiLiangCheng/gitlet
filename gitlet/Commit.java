@@ -1,7 +1,5 @@
 package gitlet;
 
-import lombok.Getter;
-
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -27,16 +25,14 @@ public class Commit implements Serializable {
      * FIXME(QingZhiLiangCheng): 对于parents成员变量的类型 有疑问 需进一步考察
      * -- GETTER --
      *  TODO(ChengShi) getter setter方法<br>
-     *  用注解也行 生成也行
-     *直接引入lombok，简化getter写法
      */
-    @Getter
+
     private String id;
-    @Getter
+
     private String message;
-    @Getter
+
     private Timestamp timestamp;
-    @Getter
+
     private List<String> parents;
     private HashMap<String, String> blobMap;
 
@@ -111,7 +107,8 @@ public class Commit implements Serializable {
      * sha1函数在Utils类中提供好了
      */
     public String toSha1() {
-        return sha1(getMessage(),getTimestamp());
+       /* return sha1(getMessage(),getTimestamp());*/
+        return null;
     }
 
     /**
