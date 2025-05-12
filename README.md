@@ -25,12 +25,12 @@ Gitlet是一个版本管理系统，仿照主流系统Git的功能并实现了�
 我是在Ubantu Linux的运行环境下执行的命令
 ```bash
 #cd 根目录 gitlet
-mkdir classes
-javac -d classes gitlet/*.java
+mkdir gitlet-test
+javac -d gitlet-test gitlet/*.java
 ```
 
 ```bash
-cd classes
+cd gitlet-test
 ls
 ```
 

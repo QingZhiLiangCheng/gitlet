@@ -187,7 +187,6 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
-     * @return
      */
     public static Head getHead(){
         return readObject(Repository.HEAD_POINT, Head.class);
@@ -195,7 +194,6 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
-     * @return
      */
     public static Commit getHeadCommit(){
         return Commit.getCommit(getHead().next);
