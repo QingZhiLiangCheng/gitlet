@@ -3,7 +3,7 @@ package gitlet;
 import java.io.File;
 
 /**
- * TODO(QingZhiLiangCheng): add and create Branch pointer.
+ * TODO(QingZhiLiangCheng): 搭建Branch pointer骨架 .
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10

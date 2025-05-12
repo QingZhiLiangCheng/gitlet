@@ -10,7 +10,7 @@ import static java.lang.System.exit;
 
 /**
  * Represents a gitlet repository.
- *  TODO(QingZhiLiangCheng): Implement Repository class.
+ * TODO(QingZhiLiangCheng): 搭建Repository class框架.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -71,7 +71,7 @@ public class Repository {
     public static File REMOVE_STAGE_DIR;
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
      * 创建CWD<br>
      * 然后调用 {@link #configDIRS()}
      */
@@ -81,7 +81,7 @@ public class Repository {
     }
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): config directory
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): config directory
      * 配置好每个文件夹的位置
      */
     private void configDIRS() {
@@ -97,7 +97,7 @@ public class Repository {
     }
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
      * 架构图在`READEME.md`中都画好了<br>
      * 如果存在.gitlet 视为错误 退出程序 打印错误信息<br>
      * "A Gitlet version-control system already exists in the current directory."<br>
@@ -114,7 +114,7 @@ public class Repository {
         createInitDir();
         Commit initCommit = new Commit();
         initCommit.saveCommit();
-        /* initReference(initCommit.getId());*/
+        initReference(initCommit.getId());
     }
 
     /**
@@ -140,7 +140,7 @@ public class Repository {
         String fileAddedContent = readContentsAsString(fileAdded);
 
         Commit headCommit = Head.getHeadCommit();
-        HashMap<String,String> headCommitBlobMap = headCommit.getBlobMap();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
 
         if (headCommitBlobMap.containsKey(addFileName)) {
             String headCommitFileBlobId = headCommitBlobMap.get(addFileName);
@@ -156,7 +156,7 @@ public class Repository {
 
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
      */
     public static void createInitDir() {
         GITLET_DIR.mkdirs();

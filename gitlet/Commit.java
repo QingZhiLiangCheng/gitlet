@@ -12,7 +12,7 @@ import static gitlet.Utils.*;
 
 /**
  * Represents a gitlet commit object.
- *  TODO(QingZhiLiangCheng): implement Commit
+ *  TODO(QingZhiLiangCheng): 搭建Commit骨架
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -20,14 +20,12 @@ import static gitlet.Utils.*;
 public class Commit implements Serializable {
 
 
-
     /**
      * TODO(QingZhiLiangCheng): 选择合适的数据结构和成员变量
      * FIXME(QingZhiLiangCheng): 对于parents成员变量的类型 有疑问 需进一步考察
      * -- GETTER --
-     *  TODO(ChengShi) getter setter方法<br>
-     *  用注解也行 生成也行
-     *
+     * TODO(ChengShi) getter setter方法<br>
+     * 用注解也行 生成也行
      */
 
     private String id;
@@ -54,9 +52,11 @@ public class Commit implements Serializable {
     public void setParents(List<String> parents) {
         this.parents = parents;
     }
+
     public HashMap<String, String> getBlobMap() {
         return blobMap;
     }
+
     public void setBlobMap(HashMap<String, String> blobMap) {
         this.blobMap = blobMap;
     }
@@ -86,14 +86,15 @@ public class Commit implements Serializable {
      */
     public Commit() {
         setMessage("inital commit");
-        Timestamp timestamp=new Timestamp(0);
+        Timestamp timestamp = new Timestamp(0);
         setTimestamp(timestamp);
-        String id=toSha1();
+        String id = toSha1();
         setId(id);
     }
 
     /**
      * TODO(QingZhiLiangCheng) 提交构造函数
+     *
      * @param message
      * @param timestamp
      * @param directParent
@@ -109,16 +110,15 @@ public class Commit implements Serializable {
     }
 
 
-
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 保存commit
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 保存commit
      * FIXME(QingZhiLiangCheng): 要不要构建动态哈希表 更快的找CommitID？
      * 将id保存至 `.gitlet/objects/commit/id`
      * {@link Utils#writeObject(File, Serializable)}
      */
     public void saveCommit() {
-        File commitFile = new File(Repository.COMMIT_DIR,id);
-        writeObject(commitFile,this);
+        File commitFile = new File(Repository.COMMIT_DIR, id);
+        writeObject(commitFile, this);
     }
 
     /**
@@ -127,16 +127,17 @@ public class Commit implements Serializable {
      * sha1函数在Utils类中提供好了
      */
     public String toSha1() {
-        return sha1(getMessage(),getTimestamp());
+        return sha1(getMessage(), getTimestamp());
     }
 
     /**
-     * TODO(QingZhiLiangCheng) 获取commit文件
+     * Done[Completed on 2025-05-12](QingZhiLiangCheng) 获取commit文件
+     *
      * @param id commit id
      * @return commit文件
      */
-    public static Commit getCommit(String id){
-        File commitFile = join(Repository.COMMIT_DIR,id);
+    public static Commit getCommit(String id) {
+        File commitFile = join(Repository.COMMIT_DIR, id);
         return readObject(commitFile, Commit.class);
     }
 
