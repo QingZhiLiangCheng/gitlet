@@ -2,6 +2,7 @@ package gitlet;
 
 
 import java.io.File;
+import java.util.HashMap;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
@@ -119,7 +120,7 @@ public class Repository {
     /**
      * TODO(QingZhiLiangCheng) add command<br>
      * <p>
-     * 1.文件名是空？<br>
+     * 1.文件名是空？ 抛异常{@link GitletException} "Please enter a file name."<br>
      * 2.工作目录中不存在此文件？<br>
      * 3.如果文件已经被track 具体表现为与blobMap中的文件名一样<br>
      * 3.1 内容一致: 不需要纳入暂存区(确保add区和remove区都没有）<br>
@@ -128,6 +129,28 @@ public class Repository {
      * @param addFileName 提交的文件名
      */
     public void add(String addFileName) {
+        if (addFileName == null || addFileName.isEmpty()) {
+            throw new GitletException("Please enter a file name.");
+        }
+
+        File fileAdded = join(CWD, addFileName);
+        if (!fileAdded.exists()) {
+            throw new GitletException("File does not exist.");
+        }
+        String fileAddedContent = readContentsAsString(fileAdded);
+
+        Commit headCommit = Head.getHeadCommit();
+        HashMap<String,String> headCommitBlobMap = headCommit.getBlobMap();
+
+        if (headCommitBlobMap.containsKey(addFileName)) {
+            String headCommitFileBlobId = headCommitBlobMap.get(addFileName);
+            //内容是否一致？
+            //直接比内容还是比hash 我感觉其实都一样
+        }
+        Blob blob = new Blob(fileAddedContent);
+        blob.save();
+        BlobPointer blobPointer = new BlobPointer(blob.getId());
+        blobPointer.saveInAddStage(addFileName);
 
     }
 

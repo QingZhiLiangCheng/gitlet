@@ -38,7 +38,7 @@ public class Head extends Pointer {
      * TODO(QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      * @return
      */
-    public Commit getHeadCommit(){
+    public static Commit getHeadCommit(){
         return Commit.getCommit(getHead().next);
     }
 }

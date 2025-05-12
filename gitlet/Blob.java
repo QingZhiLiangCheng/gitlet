@@ -21,7 +21,53 @@ public class Blob {
      * filePath: 拼接{@link Repository#COMMIT_DIR}和id 其实我觉得这个属性可有可无<br>
      */
     private String content;
+
     private String id;
     private File filePath;
 
+    /**
+     * TODO(ChengShi): Blob构造函数
+     * hash content
+     * 构造filePath: File: {@link Repository#BLOBS_DIR} name:id
+     * 拼接使用{@link Utils#join(File, String...)}
+     *
+     * @param content
+     */
+    public Blob(String content) {
+
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public File getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(File filePath) {
+        this.filePath = filePath;
+    }
+
+
+
+    /**
+     * TODO(ChengShi): 在filePath写入content
+     * {@link Utils#writeContents(File, Object...)}
+     */
+    public void save() {
+
+    }
 }
