@@ -11,18 +11,28 @@ import static gitlet.Utils.*;
  * @author QingZhiLiangCheng
  * @since 2025-05-10
  */
-public class Branch extends Pointer {
+public class Branch implements Serializable {
     private final String branchName;
+
+    private final Pointer next;
 
     /**
      * Done[Completed on 2025-05-10](QingZhiLiangCheng) Branch构造方法
      *
-     * @param id         commitID
      * @param branchName branch name
+     * @param commitID   commitID
      */
-    public Branch(String id, String branchName) {
-        super(id);
+    public Branch(String branchName, String commitID) {
+        this.next = new Pointer(commitID);
         this.branchName = branchName;
+    }
+
+    public Pointer getNext() {
+        return next;
+    }
+
+    public String getBranchName() {
+        return branchName;
     }
 
     /**

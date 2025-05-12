@@ -82,7 +82,6 @@ public class Commit implements Serializable {
      * 初始提交要求<br>
      * message: "inital commit"<br>
      * timestamp: "(Unix)纪元" 即 00:00:00 UTC, Thursday, 1 January 1970
-     * id {@link #toSha1()}
      */
     public Commit() {
         setMessage("inital commit");
