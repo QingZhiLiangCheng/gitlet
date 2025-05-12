@@ -14,7 +14,7 @@ public class Main {
      * <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) {
-        // TODO[Completed on 2025-05-11](QingZhiLiangCheng): what if args is empty?
+        // Done[Completed on 2025-05-11](QingZhiLiangCheng): what if args is empty?
         if (args.length == 0) {
             System.out.println("Please enter a command.");
             return;
@@ -24,7 +24,7 @@ public class Main {
         switch (firstArg) {
             case "init":
                 /*
-                 * TODO[Completed on 2025-05-11](QingZhiLiangCheng: init): 处理 `init` 命令
+                 * Done[Completed on 2025-05-11](QingZhiLiangCheng: init): 处理 `init` 命令
                  * 架构图在`notes/gitlet.md`中都画好了
                  * 如果存在.gitlet 视为错误 退出程序 打印错误信息
                  * "A Gitlet version-control system already exists in the current directory."

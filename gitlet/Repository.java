@@ -2,6 +2,7 @@ package gitlet;
 
 
 import java.io.File;
+import java.util.HashMap;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
@@ -9,7 +10,7 @@ import static java.lang.System.exit;
 
 /**
  * Represents a gitlet repository.
- *  TODO(QingZhiLiangCheng): Implement Repository class.
+ * TODO(QingZhiLiangCheng): 搭建Repository class框架.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -70,7 +71,7 @@ public class Repository {
     public static File REMOVE_STAGE_DIR;
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
      * 创建CWD<br>
      * 然后调用 {@link #configDIRS()}
      */
@@ -80,7 +81,7 @@ public class Repository {
     }
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): config directory
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): config directory
      * 配置好每个文件夹的位置
      */
     private void configDIRS() {
@@ -96,7 +97,7 @@ public class Repository {
     }
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
      * 架构图在`READEME.md`中都画好了<br>
      * 如果存在.gitlet 视为错误 退出程序 打印错误信息<br>
      * "A Gitlet version-control system already exists in the current directory."<br>
@@ -113,13 +114,13 @@ public class Repository {
         createInitDir();
         Commit initCommit = new Commit();
         initCommit.saveCommit();
-        /* initReference(initCommit.getId());*/
+        initReference(initCommit.getId());
     }
 
     /**
      * TODO(QingZhiLiangCheng) add command<br>
      * <p>
-     * 1.文件名是空？<br>
+     * 1.文件名是空？ 抛异常{@link GitletException} "Please enter a file name."<br>
      * 2.工作目录中不存在此文件？<br>
      * 3.如果文件已经被track 具体表现为与blobMap中的文件名一样<br>
      * 3.1 内容一致: 不需要纳入暂存区(确保add区和remove区都没有）<br>
@@ -128,12 +129,34 @@ public class Repository {
      * @param addFileName 提交的文件名
      */
     public void add(String addFileName) {
+        if (addFileName == null || addFileName.isEmpty()) {
+            throw new GitletException("Please enter a file name.");
+        }
+
+        File fileAdded = join(CWD, addFileName);
+        if (!fileAdded.exists()) {
+            throw new GitletException("File does not exist.");
+        }
+        String fileAddedContent = readContentsAsString(fileAdded);
+
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
+
+        if (headCommitBlobMap.containsKey(addFileName)) {
+            String headCommitFileBlobId = headCommitBlobMap.get(addFileName);
+            //内容是否一致？
+            //直接比内容还是比hash 我感觉其实都一样
+        }
+        Blob blob = new Blob(fileAddedContent);
+        blob.save();
+        BlobPointer blobPointer = new BlobPointer(blob.getId());
+        blobPointer.saveInAddStage(addFileName);
 
     }
 
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
      */
     public static void createInitDir() {
         GITLET_DIR.mkdirs();
@@ -162,4 +185,17 @@ public class Repository {
     }
 
 
+    /**
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
+     */
+    public static Head getHead(){
+        return readObject(Repository.HEAD_POINT, Head.class);
+    }
+
+    /**
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
+     */
+    public static Commit getHeadCommit(){
+        return Commit.getCommit(getHead().next);
+    }
 }

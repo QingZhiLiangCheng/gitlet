@@ -6,7 +6,7 @@ import java.io.Serializable;
 import static gitlet.Utils.*;
 
 /**
- * TODO(QingZhiLiangCheng): add and create Head pointer.
+ * TODO(QingZhiLiangCheng): 搭建Head pointer框架.
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
@@ -18,7 +18,7 @@ public class Head extends Pointer {
 
 
     /**
-     * TODO[Completed on 2025-05-10](QingZhiLiangCheng)
+     * Done[Completed on 2025-05-10](QingZhiLiangCheng)
      * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
      * 写入HEAD_POINT {@link Utils#writeObject(File, Serializable)}
      */
@@ -26,19 +26,4 @@ public class Head extends Pointer {
         writeObject(Repository.HEAD_POINT, this);
     }
 
-    /**
-     * TODO(QingZhiLiangCheng): 获取HEAD指针
-     * @return
-     */
-    public static Head getHead(){
-        return readObject(Repository.HEAD_POINT, Head.class);
-    }
-
-    /**
-     * TODO(QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
-     * @return
-     */
-    public Commit getHeadCommit(){
-        return Commit.getCommit(getHead().next);
-    }
 }
