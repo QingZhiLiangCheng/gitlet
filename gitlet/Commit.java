@@ -1,5 +1,6 @@
 package gitlet;
 
+
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -25,6 +26,8 @@ public class Commit implements Serializable {
      * FIXME(QingZhiLiangCheng): 对于parents成员变量的类型 有疑问 需进一步考察
      * -- GETTER --
      *  TODO(ChengShi) getter setter方法<br>
+     *  用注解也行 生成也行
+     *
      */
 
     private String id;
@@ -44,8 +47,8 @@ public class Commit implements Serializable {
         this.message = message;
     }
 
-    public void setTimestamp() {
-        this.timestamp = new Timestamp(System.currentTimeMillis());
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setParents(List<String> parents) {
@@ -58,6 +61,22 @@ public class Commit implements Serializable {
         this.blobMap = blobMap;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public List<String> getParents() {
+        return parents;
+    }
+
     /**
      * TODO(ChengShi) 实现初始提交 <br>
      * 初始提交要求<br>
@@ -67,7 +86,8 @@ public class Commit implements Serializable {
      */
     public Commit() {
         setMessage("inital commit");
-        setTimestamp();
+        Timestamp timestamp=new Timestamp(0);
+        setTimestamp(timestamp);
         String id=toSha1();
         setId(id);
     }
@@ -107,8 +127,7 @@ public class Commit implements Serializable {
      * sha1函数在Utils类中提供好了
      */
     public String toSha1() {
-       /* return sha1(getMessage(),getTimestamp());*/
-        return null;
+        return sha1(getMessage(),getTimestamp());
     }
 
     /**
