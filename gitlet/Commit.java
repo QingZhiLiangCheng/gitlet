@@ -84,10 +84,9 @@ public class Commit implements Serializable {
      * timestamp: "(Unix)纪元" 即 00:00:00 UTC, Thursday, 1 January 1970
      */
     public Commit() {
-        setMessage("inital commit");
-        Timestamp timestamp=new Timestamp(0);
-        setTimestamp(timestamp);
-        setId();
+        message="inital commit";
+        timestamp=new Timestamp(0);
+        id=sha1(message,timestamp);
     }
 
     /**
