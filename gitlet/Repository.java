@@ -2,6 +2,7 @@ package gitlet;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import static gitlet.Utils.*;
@@ -181,7 +182,14 @@ public class Repository {
      * @param commitId commitID
      */
     private static void initReference(String commitId) {
-
+        try {
+        Branch master=new Branch("master",commitId);
+        master.store();
+        Head head=new Head(commitId);
+        head.score();
+        } catch (Exception e) {
+            throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
+        }
     }
 
 
