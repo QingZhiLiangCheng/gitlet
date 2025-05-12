@@ -39,8 +39,8 @@ public class Commit implements Serializable {
     private List<String> parents;
     private HashMap<String, String> blobMap;
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId() {
+        this.id = sha1(message,timestamp);
     }
 
     public void setMessage(String message) {
@@ -88,8 +88,7 @@ public class Commit implements Serializable {
         setMessage("inital commit");
         Timestamp timestamp=new Timestamp(0);
         setTimestamp(timestamp);
-        String id=toSha1();
-        setId(id);
+        setId();
     }
 
     /**
@@ -126,9 +125,7 @@ public class Commit implements Serializable {
      * 将message和TimeStamp混合哈希<br>
      * sha1函数在Utils类中提供好了
      */
-    public String toSha1() {
-        return sha1(getMessage(),getTimestamp());
-    }
+
 
     /**
      * TODO(QingZhiLiangCheng) 获取commit文件
