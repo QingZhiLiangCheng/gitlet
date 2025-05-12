@@ -187,7 +187,7 @@ public class Repository {
         master.store();
         Head head=new Head(commitId);
         head.score();
-        } catch (Exception e) {
+        } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
         }
     }
