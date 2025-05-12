@@ -30,6 +30,7 @@ public class Blob {
      * hash content
      * 构造filePath: File: {@link Repository#BLOBS_DIR} name:id
      * 拼接使用{@link Utils#join(File, String...)}
+     * hash
      *
      * @param content
      */

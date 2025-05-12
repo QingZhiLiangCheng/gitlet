@@ -139,7 +139,7 @@ public class Repository {
         }
         String fileAddedContent = readContentsAsString(fileAdded);
 
-        Commit headCommit = Head.getHeadCommit();
+        Commit headCommit = getHeadCommit();
         HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
 
         if (headCommitBlobMap.containsKey(addFileName)) {
@@ -185,4 +185,19 @@ public class Repository {
     }
 
 
+    /**
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
+     * @return
+     */
+    public static Head getHead(){
+        return readObject(Repository.HEAD_POINT, Head.class);
+    }
+
+    /**
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
+     * @return
+     */
+    public static Commit getHeadCommit(){
+        return Commit.getCommit(getHead().next);
+    }
 }
