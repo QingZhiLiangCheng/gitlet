@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import static gitlet.Utils.*;
@@ -87,6 +88,8 @@ public class Commit implements Serializable {
         message="inital commit";
         timestamp=new Timestamp(0);
         id=sha1(message,timestamp.toString());
+        blobMap = new HashMap<>();
+        parents = new LinkedList<>();
     }
 
     /**

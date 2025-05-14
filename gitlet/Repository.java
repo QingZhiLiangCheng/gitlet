@@ -71,9 +71,9 @@ public class Repository {
      * the stage directory.
      */
     public static File ADD_STAGE_DIR;
-    public static AddStage addStage = new AddStage();
+    public static AddStage addStage;
     public static File REMOVE_STAGE_DIR;
-    public static RemoveStage removeStage = new RemoveStage();
+    public static RemoveStage removeStage;
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
@@ -83,6 +83,8 @@ public class Repository {
     public Repository() {
         CWD = new File(System.getProperty("user.dir"));
         configDIRS();
+        addStage = new AddStage();
+        removeStage = new RemoveStage();
     }
 
     /**
@@ -218,7 +220,7 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
      */
     public static Head getHead() {
-        return readObject(Repository.HEAD_POINT, Head.class);
+        return readObject(join(Repository.HEAD_POINT,"HEAD"), Head.class);
     }
 
     /**
