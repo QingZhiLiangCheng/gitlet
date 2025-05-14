@@ -28,11 +28,11 @@ public class Blob {
     /**
      * TODO(ChengShi): Blob构造函数
      * hash content
-     * 构造filePath: File: {@link Repository#BLOBS_DIR} name:id
-     * 拼接使用{@link Utils#join(File, String...)}
+     * Blob文件路径: 文件位置？ 文件名:id
+     * {@link Utils#join(File, String...)}
      * hash
      *
-     * @param content
+     * @param content content
      */
     public Blob(String content) {
 
@@ -70,5 +70,12 @@ public class Blob {
      */
     public void save() {
 
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 根据id 拿到content
+     */
+    public static String getBlobContentById() {
+        return null;
     }
 }

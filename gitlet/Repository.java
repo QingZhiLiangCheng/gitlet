@@ -4,6 +4,8 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
@@ -69,7 +71,9 @@ public class Repository {
      * the stage directory.
      */
     public static File ADD_STAGE_DIR;
+    public static AddStage addStage = new AddStage();
     public static File REMOVE_STAGE_DIR;
+    public static RemoveStage removeStage = new RemoveStage();
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
@@ -123,9 +127,13 @@ public class Repository {
      * <p>
      * 1.文件名是空？ 抛异常{@link GitletException} "Please enter a file name."<br>
      * 2.工作目录中不存在此文件？<br>
-     * 3.如果文件已经被track 具体表现为与blobMap中的文件名一样<br>
-     * 3.1 内容一致: 不需要纳入暂存区(确保add区和remove区都没有）<br>
-     * 3.2 内容不一致: 加入暂存区<br>
+     * 3. remove区中存在
+     * 4. add区中存在
+     * 5.如果文件已经被track 具体表现为与blobMap中的文件名一样<br>
+     * 5.1 内容一致: 不需要纳入暂存区<br>
+     * 5.2 内容不一致: 加入暂存区<br>
+     * FIXME(QingZhiLiangCheng) 是否未来可以commit部分add
+     * FIXME(QingZhiLiangCheng) add一个文件后未commit后再次add 是否要创建新的Blob？
      *
      * @param addFileName 提交的文件名
      */
@@ -135,11 +143,20 @@ public class Repository {
         }
 
         File fileAdded = join(CWD, addFileName);
+
         if (!fileAdded.exists()) {
             throw new GitletException("File does not exist.");
         }
-        String fileAddedContent = readContentsAsString(fileAdded);
 
+        if (removeStage.exist(addFileName)) {
+            removeStage.remove(addFileName);
+        }
+
+        if (addStage.exist(addFileName)) {
+            addStage.remove(addFileName);
+        }
+
+        String fileAddedContent = readContentsAsString(fileAdded);
         Commit headCommit = getHeadCommit();
         HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
 
@@ -147,11 +164,15 @@ public class Repository {
             String headCommitFileBlobId = headCommitBlobMap.get(addFileName);
             //内容是否一致？
             //直接比内容还是比hash 我感觉其实都一样
+            String addContentHash = sha1(fileAddedContent);
+            if (headCommitFileBlobId.equals(addContentHash)) {
+                return;
+            }
         }
         Blob blob = new Blob(fileAddedContent);
         blob.save();
         BlobPointer blobPointer = new BlobPointer(blob.getId());
-        blobPointer.saveInAddStage(addFileName);
+        addStage.save(addFileName, blobPointer);
 
     }
 
@@ -183,10 +204,10 @@ public class Repository {
      */
     private static void initReference(String commitId) {
         try {
-        Branch master=new Branch("master",commitId);
-        master.store();
-        Head head=new Head(commitId);
-        head.score();
+            Branch master = new Branch("master", commitId);
+            master.store();
+            Head head = new Head(commitId);
+            head.score();
         } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
         }
@@ -196,14 +217,14 @@ public class Repository {
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
      */
-    public static Head getHead(){
+    public static Head getHead() {
         return readObject(Repository.HEAD_POINT, Head.class);
     }
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      */
-    public static Commit getHeadCommit(){
+    public static Commit getHeadCommit() {
         return Commit.getCommit(getHead().next);
     }
 }
