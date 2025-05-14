@@ -43,6 +43,7 @@ public class Main {
                 break;
             case "commit":
                 // TODO(QingZhiLiangCheng): 处理 `commit [message]` 命令
+                repository.commit(args[1]);
                 break;
             case "rm":
                 // TODO(QingZhiLiangCheng): 处理 `rm [filename]` 命令

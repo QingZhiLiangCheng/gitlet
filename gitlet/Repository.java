@@ -2,10 +2,7 @@ package gitlet;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
@@ -110,7 +107,7 @@ public class Repository {
      * "A Gitlet version-control system already exists in the current directory."<br>
      * 创建各个文件夹{@link #createInitDir()}<br>
      * 创建 Commit 0 {@link Commit#Commit()}<br>
-     * 存储commit {@link Commit#saveCommit()}<br>
+     * 存储commit {@link Commit#save()}<br>
      * 创建master和HEAD {@link #initReference(String)} ()}<br>
      */
     public void init() {
@@ -120,12 +117,12 @@ public class Repository {
         }
         createInitDir();
         Commit initCommit = new Commit();
-        initCommit.saveCommit();
+        initCommit.save();
         initReference(initCommit.getId());
     }
 
     /**
-     * TODO(QingZhiLiangCheng) add command<br>
+     * Done[Completed on 2025-05-14](QingZhiLiangCheng) add command<br>
      * <p>
      * 1.文件名是空？ 抛异常{@link GitletException} "Please enter a file name."<br>
      * 2.工作目录中不存在此文件？<br>
@@ -178,6 +175,46 @@ public class Repository {
 
     }
 
+    /**
+     * TODO(QingZhiLiangCheng): commit command
+     * 1. add stage, remove stage为空 -- "No changes added to the commit."
+     * 2. commit message 为空 -- "Please enter a commit message."
+     * 3. commit的blob map里面要存这个版本所有的文件的位置(包括之前已经commit过的文件）
+     * 4. 根据add stage, remove stage更新 新的blob map
+     * TODO(QingZhiLiangCheng): 给commit加入branch name属性 呃呃
+     */
+    public void commit(String commitMsg) {
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> oldHashMap = headCommit.getBlobMap();
+        HashMap<String, String> newHashMap = updateHashMap(oldHashMap);
+        Commit newCommit = new Commit(headCommit, commitMsg, newHashMap);
+        newCommit.save();
+        addStage.clear();
+        removeStage.clear();
+        saveHead();
+        saveBranch();
+
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng)
+     */
+    private void saveBranch() {
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng)
+     */
+    private void saveHead() {
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
+     */
+    private HashMap<String, String> updateHashMap(HashMap<String, String> oldHashMap) {
+        return new HashMap<>();
+    }
+
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
@@ -220,7 +257,7 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
      */
     public static Head getHead() {
-        return readObject(join(Repository.HEAD_POINT,"HEAD"), Head.class);
+        return readObject(join(Repository.HEAD_POINT, "HEAD"), Head.class);
     }
 
     /**
@@ -229,4 +266,6 @@ public class Repository {
     public static Commit getHeadCommit() {
         return Commit.getCommit(getHead().next);
     }
+
+
 }

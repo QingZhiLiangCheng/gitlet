@@ -79,7 +79,7 @@ public class Commit implements Serializable {
     }
 
     /**
-     * TODO(ChengShi) 实现初始提交 <br>
+     * Done[Completed on 2025-05-12](ChengShi) 实现初始提交 <br>
      * 初始提交要求<br>
      * message: "inital commit"<br>
      * timestamp: "(Unix)纪元" 即 00:00:00 UTC, Thursday, 1 January 1970
@@ -108,21 +108,29 @@ public class Commit implements Serializable {
 
     }
 
+    /**
+     * TODO(ChengShi) 通过oldCommit构造newCommit
+     * 主要是利用oldCommit的blobMap.
+     */
+    public Commit(Commit oldCommit,String message,HashMap<String,String> blobMap) {
+
+    }
+
 
 
     /**
-     * TODO[Completed on 2025-05-11](QingZhiLiangCheng): 保存commit
+     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 保存commit
      * FIXME(QingZhiLiangCheng): 要不要构建动态哈希表 更快的找CommitID？
      * 将id保存至 `.gitlet/objects/commit/id`
      * {@link Utils#writeObject(File, Serializable)}
      */
-    public void saveCommit() {
+    public void save() {
         File commitFile = new File(Repository.COMMIT_DIR,id);
         writeObject(commitFile,this);
     }
 
     /**
-     * TODO(QingZhiLiangCheng) 获取commit文件
+     * Done(QingZhiLiangCheng)[Completed on 2025-05-11] 获取commit文件
      * @param id commit id
      * @return commit文件
      */

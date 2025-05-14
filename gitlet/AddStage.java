@@ -39,4 +39,7 @@ public class AddStage {
         File addPath = join(path, addFileName);
         writeObject(addPath, blobPointer);
     }
+
+    public void clear() {
+    }
 }

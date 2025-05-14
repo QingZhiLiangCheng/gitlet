@@ -29,4 +29,7 @@ public class RemoveStage {
     public void remove(String fileName) {
         join(path,fileName).delete();
     }
+
+    public void clear() {
+    }
 }
