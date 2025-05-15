@@ -233,7 +233,7 @@ public class Repository {
 
 
     /**
-     * TODO(ChengShi) 创建master和HEAD<br>
+     * Done[Completed on 2025-05-10](ChengShi) 创建master和HEAD<br>
      * 创建Branch master 指向init commit{@link Branch#Branch(String, String)}<br>
      * 写入.gitlet/refs/haeds/master {@link Branch#store()}<br>
      * 创建HEAD 指向init commit {@link Head#Head(String)}<br>

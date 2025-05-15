@@ -26,7 +26,7 @@ public class Commit implements Serializable {
      * TODO(QingZhiLiangCheng): 选择合适的数据结构和成员变量
      * FIXME(QingZhiLiangCheng): 对于parents成员变量的类型 有疑问 需进一步考察
      * -- GETTER --
-     *  TODO(ChengShi) getter setter方法<br>
+     *  Done[Completed on 2025-05-12](ChengShi) getter setter方法<br>
      *  用注解也行 生成也行
      *
      */

@@ -26,7 +26,7 @@ public class Blob {
     private File filePath;
 
     /**
-     * TODO(ChengShi): Blob构造函数
+     * Done[Completed on 2025-05-15](ChengShi): Blob构造函数
      * hash content
      * Blob文件路径: 文件位置？ 文件名:id
      * {@link Utils#join(File, String...)}
@@ -35,7 +35,9 @@ public class Blob {
      * @param content content
      */
     public Blob(String content) {
-
+        this.content=content;
+        this.id=Utils.sha1(content);
+        this.filePath=Utils.join(Repository.BLOBS_DIR, this.id);
     }
 
     public String getContent() {
@@ -50,9 +52,6 @@ public class Blob {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public File getFilePath() {
         return filePath;
@@ -65,11 +64,15 @@ public class Blob {
 
 
     /**
-     * TODO(ChengShi): 在filePath写入content
+     * Done[Completed on 2025-05-15](ChengShi): 在filePath写入content
      * {@link Utils#writeContents(File, Object...)}
      */
     public void save() {
-
+        File parentDir = this.filePath.getParentFile();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();  // 创建必要的父目录
+        }
+        Utils.writeContents(this.filePath, this.content);
     }
 
     /**
