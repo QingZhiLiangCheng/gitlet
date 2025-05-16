@@ -81,11 +81,11 @@ public class Commit implements Serializable {
     /**
      * Done[Completed on 2025-05-12](ChengShi) 实现初始提交 <br>
      * 初始提交要求<br>
-     * message: "inital commit"<br>
+     * message: "initial commit"<br>
      * timestamp: "(Unix)纪元" 即 00:00:00 UTC, Thursday, 1 January 1970
      */
     public Commit() {
-        message="inital commit";
+        message="initial commit";
         timestamp=new Timestamp(0);
         id=sha1(message,timestamp.toString());
         blobMap = new HashMap<>();

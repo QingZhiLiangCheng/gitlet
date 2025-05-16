@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 
@@ -11,9 +12,12 @@ import static gitlet.Utils.*;
  * @author QingZhiLiangCheng
  * @since 2025-05-10
  */
-public class Head extends Pointer {
-    public Head(String id) {
-        super(id);
+public class Head implements Serializable{
+    private final String branchName;
+    private final Pointer pointer;
+    public Head(String branchName,String commitID) {
+        this.branchName = branchName;
+        pointer = new Pointer(commitID);
     }
 
 
@@ -27,4 +31,7 @@ public class Head extends Pointer {
         writeObject(path, this);
     }
 
+    public Pointer getPointer() {
+        return pointer;
+    }
 }

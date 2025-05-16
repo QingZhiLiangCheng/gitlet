@@ -236,7 +236,7 @@ public class Repository {
      * Done[Completed on 2025-05-10](ChengShi) 创建master和HEAD<br>
      * 创建Branch master 指向init commit{@link Branch#Branch(String, String)}<br>
      * 写入.gitlet/refs/haeds/master {@link Branch#store()}<br>
-     * 创建HEAD 指向init commit {@link Head#Head(String)}<br>
+     * 创建HEAD 指向init commit {@link Head#Head(String, String)} )}<br>
      * 写入.gitlet/HEAD {@link Head#score()}<br>
      *
      * @param commitId commitID
@@ -245,7 +245,7 @@ public class Repository {
         try {
             Branch master = new Branch("master", commitId);
             master.store();
-            Head head = new Head(commitId);
+            Head head = new Head("master",commitId);
             head.score();
         } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
@@ -264,7 +264,7 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      */
     public static Commit getHeadCommit() {
-        return Commit.getCommit(getHead().next);
+        return Commit.getCommit(getHead().getPointer().next);
     }
 
 
