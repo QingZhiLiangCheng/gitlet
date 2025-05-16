@@ -191,22 +191,28 @@ public class Repository {
         newCommit.save();
         addStage.clear();
         removeStage.clear();
-        saveHead();
-        saveBranch();
+        updateHead(newCommit.getId());
+        updateBranch(getHead().getBranchName(), newCommit.getId());
 
     }
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * TODO(QingZhiLiangCheng) 更新并存储branch pointer指向的位置
      */
-    private void saveBranch() {
+    private void updateBranch(String branchName, String commitID) {
+        File branchFile = join(HEADS_DIR, branchName);
+        writeContents(branchFile, new Branch(branchName, commitID));
     }
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * TODO(QingZhiLiangCheng) 更新并存储head pointer指向的位置
      */
-    private void saveHead() {
+    private void updateHead(String commitID) {
+        File headFile = join(HEADS_DIR, "HEAD");
+        Head oldHead = getHead();
+        writeContents(headFile, new Head(oldHead.getBranchName(), commitID));
     }
+
 
     /**
      * TODO(QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
@@ -245,7 +251,7 @@ public class Repository {
         try {
             Branch master = new Branch("master", commitId);
             master.store();
-            Head head = new Head("master",commitId);
+            Head head = new Head("master", commitId);
             head.score();
         } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
@@ -264,7 +270,7 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      */
     public static Commit getHeadCommit() {
-        return Commit.getCommit(getHead().getPointer().next);
+        return Commit.getCommit(getHead().next);
     }
 
 

@@ -12,12 +12,12 @@ import static gitlet.Utils.*;
  * @author QingZhiLiangCheng
  * @since 2025-05-10
  */
-public class Head implements Serializable{
+public class Head extends Pointer{
     private final String branchName;
-    private final Pointer pointer;
+
     public Head(String branchName,String commitID) {
+        super(commitID);
         this.branchName = branchName;
-        pointer = new Pointer(commitID);
     }
 
 
@@ -31,7 +31,8 @@ public class Head implements Serializable{
         writeObject(path, this);
     }
 
-    public Pointer getPointer() {
-        return pointer;
+
+    public String getBranchName() {
+        return branchName;
     }
 }
