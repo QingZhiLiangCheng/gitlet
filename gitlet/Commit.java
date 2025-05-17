@@ -109,13 +109,12 @@ public class Commit implements Serializable {
     }
 
     /**
-     * Done[Completed on 2025-05-17](ChengShi) 通过oldCommit构造newCommit
-     * 主要是利用oldCommit的blobMap.
+     * Done[Completed on 2025-05-17](ChengShi) 构造newCommit
      */
     public Commit(Commit oldCommit,String message,HashMap<String,String> blobMap) {
         this.message=message;
         this.timestamp=new Timestamp(System.currentTimeMillis());
-        this.id=sha1(message,timestamp);
+        this.id=sha1(message,timestamp.toString());
         this.parents=new LinkedList<>();;
         this.parents.add(oldCommit.getId());
         this.blobMap=blobMap;

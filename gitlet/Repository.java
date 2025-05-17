@@ -1,8 +1,5 @@
 package gitlet;
 
-
-import edu.princeton.cs.algs4.AdjMatrixEdgeWeightedDigraph;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -179,7 +176,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): commit command
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): commit command
      * 1. add stage, remove stage为空 -- "No changes added to the commit."
      * 2. commit message 为空 -- "Please enter a commit message."
      * 3. commit的blob map里面要存这个版本所有的文件的位置(包括之前已经commit过的文件）
@@ -207,25 +204,25 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng) 更新并存储branch pointer指向的位置
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储branch pointer指向的位置
      */
     private void updateBranch(String branchName, String commitID) {
         File branchFile = join(HEADS_DIR, branchName);
-        writeContents(branchFile, new Branch(branchName, commitID));
+        writeObject(branchFile, new Branch(branchName, commitID));
     }
 
     /**
-     * TODO(QingZhiLiangCheng) 更新并存储head pointer指向的位置
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储head pointer指向的位置
      */
     private void updateHead(String commitID) {
-        File headFile = join(HEADS_DIR, "HEAD");
         Head oldHead = getHead();
-        writeContents(headFile, new Head(oldHead.getBranchName(), commitID));
+        File headFile = join(HEADS_DIR, oldHead.getBranchName());
+        writeObject(headFile, new Head(oldHead.getBranchName(), commitID));
     }
 
 
     /**
-     * TODO(QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
      */
     private HashMap<String, String> updateHashMap(HashMap<String, String> hashMap,
                                                   List<String> addStageFiles,

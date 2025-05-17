@@ -34,14 +34,14 @@ public class RemoveStage {
 
 
     /**
-     * TODO(QingZhiLiangCheng) 获取removeStage中的文件列表
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng) 获取removeStage中的文件列表
      */
     public List<String> getFiles() {
         return plainFilenamesIn(path);
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 删除文件
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 删除文件
      * @param fileName
      */
     public void delete(String fileName) {

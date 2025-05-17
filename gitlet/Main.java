@@ -37,12 +37,12 @@ public class Main {
                 break;
             case "add":
                 /*
-                 * TODO(QingZhiLiangCheng: add): 处理 `add [filename]` 命令
+                 * Done[Completed on 2025-05-14](QingZhiLiangCheng: add): 处理 `add [filename]` 命令
                  */
                 repository.add(args[1]);
                 break;
             case "commit":
-                // TODO(QingZhiLiangCheng): 处理 `commit [message]` 命令
+                // Done[Completed on 2025-05-17](QingZhiLiangCheng): 处理 `commit [message]` 命令
                 repository.commit(args[1]);
                 break;
             case "rm":
