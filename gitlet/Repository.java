@@ -234,11 +234,12 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): print log
-     * example format
+     * example format 官网上的
      * ===
      * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
      * Date: Thu Nov 9 20:00:05 2017 -0800
      * A commit message.
+     *
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 对于合并提交（具有两个父提交的提交）
      * ===
      * commit 3e8bf1d794ca2e9ef8a4007275acf3751c7170ff
@@ -246,7 +247,7 @@ public class Repository {
      * Date: Sat Nov 11 12:30:00 2017 -0800
      * Merged development into master.
      * “Merge:” 后面的两个十六进制数字依次由第一和第二个父提交 ID 的前七位组成
-     * <br>
+     *
      * 文档中说
      * "Starting at the current head commit,
      * display information about each commit backwards along the commit tree until the initial commit,
@@ -276,9 +277,18 @@ public class Repository {
             for (String id : parents) {
                 System.out.print(" " + id.substring(0, 7));
             }
+            System.out.print("\n");
         }
         System.out.println("Date: " + commit.getTimestamp().toString());
-        System.out.println(commit.getMessage());
+        System.out.println("Message: " + commit.getMessage());
+        HashMap<String, String> commitBlobMap = commit.getBlobMap();
+        if (!commitBlobMap.isEmpty()) {
+            System.out.print("Files:");
+            for (String filename : commitBlobMap.keySet()) {
+                System.out.print(" " + filename);
+            }
+            System.out.print("\n");
+        }
         System.out.print("\n");
     }
 
