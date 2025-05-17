@@ -51,6 +51,7 @@ public class Main {
                 break;
             case "log":
                 // TODO(QingZhiLiangCheng): 处理 `log` 命令
+                repository.printLog();
                 break;
             case "find":
                 // TODO(QingZhiLiangCheng): 处理 `find [commit message]` 命令

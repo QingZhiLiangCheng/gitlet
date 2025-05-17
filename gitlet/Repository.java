@@ -232,6 +232,56 @@ public class Repository {
 
     }
 
+    /**
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): print log
+     * example format
+     * ===
+     * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
+     * Date: Thu Nov 9 20:00:05 2017 -0800
+     * A commit message.
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 对于合并提交（具有两个父提交的提交）
+     * ===
+     * commit 3e8bf1d794ca2e9ef8a4007275acf3751c7170ff
+     * Merge: 4975af1 2c1ead1
+     * Date: Sat Nov 11 12:30:00 2017 -0800
+     * Merged development into master.
+     * “Merge:” 后面的两个十六进制数字依次由第一和第二个父提交 ID 的前七位组成
+     * <br>
+     * 文档中说
+     * "Starting at the current head commit,
+     * display information about each commit backwards along the commit tree until the initial commit,
+     * following the first parent commit links, ignoring any second parents found in merge commits. "
+     * 所以说对于普通提交：顺着父提交打印就行
+     * 对于合并提交：需要显示该提交的信息，包括两个父提交的简短哈希值，但仅沿着第一个父提交继续向上回溯历史。
+     * TODO(QingZhiLiangCheng): 测试合并打印是否正确
+     */
+    public void printLog() {
+        Commit headCommit = getHeadCommit();
+        Commit commit = headCommit;
+        while (!commit.getParents().isEmpty()) {
+            printCommitLog(commit);
+            commit = Commit.getCommit(commit.getParents().getFirst());
+        }
+    }
+
+    /**
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
+     */
+    private void printCommitLog(Commit commit) {
+        List<String> parents = commit.getParents();
+        System.out.println("===");
+        System.out.println("commit " + commit.getId());
+        if (parents.size() > 1) {
+            System.out.print("Merge:");
+            for (String id : parents) {
+                System.out.print(" " + id.substring(0, 7));
+            }
+        }
+        System.out.println("Date: " + commit.getTimestamp().toString());
+        System.out.println(commit.getMessage());
+        System.out.print("\n");
+    }
+
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储branch pointer指向的位置
