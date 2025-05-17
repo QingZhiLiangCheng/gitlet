@@ -276,7 +276,7 @@ public class Repository {
         String fileName;
         if (args.length == 4) {
             //java gitlet.Main checkout [commit id] -- [file name]
-            fileName = args[2];
+            fileName = args[3];
             String commitId = args[1];
             checkoutFileFromCommitId(commitId, fileName);
         }
@@ -405,15 +405,15 @@ public class Repository {
      * 2. 判断fileName是否存在？ - "File does not exist in that commit."
      */
     private void checkoutFileFromCommitId(String commitId, String fileName) {
-        Commit headCommit = getHeadCommit();
-        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
-        if (!headCommitBlobMap.containsKey(fileName)) {
+        Commit commit = Commit.formId(commitId);
+        HashMap<String, String> commitBlobMap = commit.getBlobMap();
+        if (!commitBlobMap.containsKey(fileName)) {
             throw new GitletException("File does not exist in that commit.");
         }
-        String blobId = headCommitBlobMap.get(fileName);
-        Blob blob = Blob.fromId(blobId);
+        String blobId = commitBlobMap.get(fileName);
+        String blobContent = Blob.getContentFromId(blobId);
         File targetFile = join(CWD, fileName);
-        overWriteFileWithBlob(targetFile, blob.getContent());
+        overWriteFileWithBlob(targetFile, blobContent);
     }
 
     /**

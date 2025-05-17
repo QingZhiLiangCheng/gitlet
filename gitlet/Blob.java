@@ -1,6 +1,9 @@
 package gitlet;
 
 import java.io.File;
+import java.io.Serializable;
+
+import static gitlet.Utils.*;
 
 /**
  * TODO(QingZhiLiangCheng): 搭建Branch pointer骨架 .
@@ -8,7 +11,7 @@ import java.io.File;
  * @author QingZhiLiangCheng
  * @since 2025-05-10
  */
-public class Blob {
+public class Blob implements Serializable {
 
     /**
      * TODO(QingZhiLiangCheng): 选择合适的成员变量和数据结构<br>
@@ -80,7 +83,7 @@ public class Blob {
     /**
      * TODO(ChengShi)
      */
-    public static Blob fromId(String blobId) {
-        return null;
+    public static String getContentFromId(String blobId) {
+        return readContentsAsString(join(Repository.BLOBS_DIR, blobId));
     }
 }
