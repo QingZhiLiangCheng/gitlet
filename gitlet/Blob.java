@@ -80,7 +80,7 @@ public class Blob {
     /**
      * TODO(ChengShi)
      */
-    public static Blob getBlobById(String blobId) {
+    public static Blob fromId(String blobId) {
         return null;
     }
 }

@@ -260,7 +260,7 @@ public class Repository {
         Commit commit = getHeadCommit();
         while (!commit.getParents().isEmpty()) {
             printCommitLog(commit);
-            commit = Commit.getCommit(commit.getParents().get(0));
+            commit = Commit.formId(commit.getParents().get(0));
         }
         printCommitLog(commit);
     }
@@ -395,7 +395,7 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      */
     public static Commit getHeadCommit() {
-        return Commit.getCommit(getHead().next);
+        return Commit.formId(getHead().next);
     }
 
 
@@ -411,7 +411,7 @@ public class Repository {
             throw new GitletException("File does not exist in that commit.");
         }
         String blobId = headCommitBlobMap.get(fileName);
-        Blob blob = Blob.getBlobById(blobId);
+        Blob blob = Blob.fromId(blobId);
         File targetFile = join(CWD, fileName);
         overWriteFileWithBlob(targetFile, blob.getContent());
     }

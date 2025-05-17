@@ -139,7 +139,7 @@ public class Commit implements Serializable {
      * @param id commit id
      * @return commit文件
      */
-    public static Commit getCommit(String id){
+    public static Commit formId(String id){
         File commitFile = join(Repository.COMMIT_DIR,id);
         return readObject(commitFile, Commit.class);
     }
