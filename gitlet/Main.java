@@ -47,6 +47,7 @@ public class Main {
                 break;
             case "rm":
                 // TODO(QingZhiLiangCheng): 处理 `rm [filename]` 命令
+                repository.rm(args[1]);
                 break;
             case "log":
                 // TODO(QingZhiLiangCheng): 处理 `log` 命令

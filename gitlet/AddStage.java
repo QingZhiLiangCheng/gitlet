@@ -36,8 +36,8 @@ public class AddStage {
      * Done[Completed on 2025-05-14](QingZhiLiangCheng) add file in add stage
      */
     public void save(String addFileName, BlobPointer blobPointer) {
-        File addPath = join(path, addFileName);
-        writeObject(addPath, blobPointer);
+        File addPointer = join(path, addFileName);
+        writeObject(addPointer, blobPointer);
     }
 
 

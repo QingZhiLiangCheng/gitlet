@@ -1,5 +1,6 @@
 package gitlet;
 
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -202,6 +203,35 @@ public class Repository {
         updateBranch(getHead().getBranchName(), newCommit.getId());
 
     }
+
+    /**
+     * Done[Completed on 2025-05-17](QingZhiLiangCHeng): remove files
+     * 1. 文件名是空 "Please enter a file name."
+     * 2. 在addStage中不存在 在commit中不存在 - "No reason to remove the file."
+     * 3. 在addStage中存在 -- 删除
+     * 4. 在commit中存在 -- 加入remove stage
+     * 5. 如果用户还没有手动删除这个文件 从工作目录中删除文件
+     */
+    public void rm(String removeFileName) {
+        if (removeFileName == null || removeFileName.isEmpty()) {
+            throw new GitletException("Please enter a file name.");
+        }
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
+        if (!addStage.exist(removeFileName) && !headCommitBlobMap.containsKey(removeFileName)) {
+            throw new GitletException("No reason to remove the file.");
+        }
+
+        if (addStage.exist(removeFileName)) {
+            addStage.delete(removeFileName);
+        }
+        if (headCommitBlobMap.containsKey(removeFileName)) {
+            removeStage.save(removeFileName);
+            restrictedDelete(new File(CWD, removeFileName));
+        }
+
+    }
+
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储branch pointer指向的位置

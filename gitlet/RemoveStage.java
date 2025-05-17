@@ -3,8 +3,7 @@ package gitlet;
 import java.io.File;
 import java.util.List;
 
-import static gitlet.Utils.join;
-import static gitlet.Utils.plainFilenamesIn;
+import static gitlet.Utils.*;
 
 /**
  * TODO(QingZhiLiangCheng): removeStage manager.
@@ -15,13 +14,14 @@ import static gitlet.Utils.plainFilenamesIn;
 public class RemoveStage {
     public static File path = Repository.REMOVE_STAGE_DIR;
 
-    RemoveStage(){}
+    RemoveStage() {
+    }
 
     /**
      * Done[Completed on 2025-05-14](QingZhiLiangCheng)
      */
-    public boolean exist(String fileName){
-        File targetFilePath = join(path,fileName);
+    public boolean exist(String fileName) {
+        File targetFilePath = join(path, fileName);
         return targetFilePath.exists();
     }
 
@@ -29,7 +29,7 @@ public class RemoveStage {
      * Done[Completed on 2025-05-14](QingZhiLiangCheng) add file in remove stage
      */
     public void remove(String fileName) {
-        join(path,fileName).delete();
+        join(path, fileName).delete();
     }
 
 
@@ -42,9 +42,18 @@ public class RemoveStage {
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 删除文件
+     *
      * @param fileName
      */
     public void delete(String fileName) {
         join(path, fileName).delete();
+    }
+
+    /**
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 删除文件暂存
+     */
+    public void save(String removeFileName) {
+        File removePointer = join(path, removeFileName);
+        writeContents(removePointer, "will delete");
     }
 }
