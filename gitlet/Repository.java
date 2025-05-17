@@ -256,12 +256,12 @@ public class Repository {
      * TODO(QingZhiLiangCheng): 测试合并打印是否正确
      */
     public void printLog() {
-        Commit headCommit = getHeadCommit();
-        Commit commit = headCommit;
+        Commit commit = getHeadCommit();
         while (!commit.getParents().isEmpty()) {
             printCommitLog(commit);
-            commit = Commit.getCommit(commit.getParents().getFirst());
+            commit = Commit.getCommit(commit.getParents().get(0));
         }
+        printCommitLog(commit);
     }
 
     /**
@@ -296,7 +296,7 @@ public class Repository {
      */
     private void updateHead(String commitID) {
         Head oldHead = getHead();
-        File headFile = join(HEADS_DIR, oldHead.getBranchName());
+        File headFile = join(HEAD_POINT, "HEAD");
         writeObject(headFile, new Head(oldHead.getBranchName(), commitID));
     }
 
