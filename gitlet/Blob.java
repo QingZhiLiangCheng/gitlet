@@ -40,6 +40,8 @@ public class Blob {
         this.filePath=Utils.join(Repository.BLOBS_DIR, this.id);
     }
 
+
+
     public String getContent() {
         return content;
     }
@@ -76,9 +78,9 @@ public class Blob {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 根据id 拿到content
+     * TODO(ChengShi)
      */
-    public static String getBlobContentById() {
+    public static Blob getBlobById(String blobId) {
         return null;
     }
 }

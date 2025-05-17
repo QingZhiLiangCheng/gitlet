@@ -239,7 +239,7 @@ public class Repository {
      * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
      * Date: Thu Nov 9 20:00:05 2017 -0800
      * A commit message.
-     *
+     * <p>
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 对于合并提交（具有两个父提交的提交）
      * ===
      * commit 3e8bf1d794ca2e9ef8a4007275acf3751c7170ff
@@ -247,7 +247,7 @@ public class Repository {
      * Date: Sat Nov 11 12:30:00 2017 -0800
      * Merged development into master.
      * “Merge:” 后面的两个十六进制数字依次由第一和第二个父提交 ID 的前七位组成
-     *
+     * <p>
      * 文档中说
      * "Starting at the current head commit,
      * display information about each commit backwards along the commit tree until the initial commit,
@@ -263,6 +263,23 @@ public class Repository {
             commit = Commit.getCommit(commit.getParents().get(0));
         }
         printCommitLog(commit);
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng)
+     *  java gitlet.Main checkout -- [file name]
+     *  java gitlet.Main checkout [commit id] -- [file name]
+     *  java gitlet.Main checkout [branch name]
+     * 123
+     */
+    public void checkout(String[] args) {
+        String fileName;
+        if (args.length == 4) {
+            //java gitlet.Main checkout [commit id] -- [file name]
+            fileName = args[2];
+            String commitId = args[1];
+            checkoutFileFromCommitId(commitId, fileName);
+        }
     }
 
     /**
@@ -382,4 +399,27 @@ public class Repository {
     }
 
 
+    /**
+     * TODO(QingZhiLiangCheng):从指定的提交中检出（恢复）某个文件到工作目录 不修改暂存区
+     * 1. 判断commit是否存在？
+     * 2. 判断fileName是否存在？ - "File does not exist in that commit."
+     */
+    private void checkoutFileFromCommitId(String commitId, String fileName) {
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
+        if (!headCommitBlobMap.containsKey(fileName)) {
+            throw new GitletException("File does not exist in that commit.");
+        }
+        String blobId = headCommitBlobMap.get(fileName);
+        Blob blob = Blob.getBlobById(blobId);
+        File targetFile = join(CWD, fileName);
+        overWriteFileWithBlob(targetFile, blob.getContent());
+    }
+
+    /**
+     * Done[Completed on 2025-05-17](QingZhiLiangCheng): 覆盖targetFile
+     */
+    private void overWriteFileWithBlob(File targetFile, String content) {
+        writeContents(targetFile, content);
+    }
 }

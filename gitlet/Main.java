@@ -46,11 +46,11 @@ public class Main {
                 repository.commit(args[1]);
                 break;
             case "rm":
-                // TODO(QingZhiLiangCheng): 处理 `rm [filename]` 命令
+                // Done[Completed on 2025-05-17](QingZhiLiangCheng): 处理 `rm [filename]` 命令
                 repository.rm(args[1]);
                 break;
             case "log":
-                // TODO(QingZhiLiangCheng): 处理 `log` 命令
+                // Done[Completed on 2025-05-17](QingZhiLiangCheng): 处理 `log` 命令
                 repository.printLog();
                 break;
             case "find":
@@ -61,6 +61,7 @@ public class Main {
                 break;
             case "checkout":
                 // TODO(QingZhiLiangCheng): 处理 `checkout` 命令
+                repository.checkout(args);
                 break;
             case "branch":
                 // TODO(QingZhiLiangCheng): 处理 `branch [branch name]` 命令
