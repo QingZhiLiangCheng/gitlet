@@ -1,8 +1,11 @@
 package gitlet;
 
 
+import edu.princeton.cs.algs4.AdjMatrixEdgeWeightedDigraph;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
@@ -181,16 +184,23 @@ public class Repository {
      * 2. commit message 为空 -- "Please enter a commit message."
      * 3. commit的blob map里面要存这个版本所有的文件的位置(包括之前已经commit过的文件）
      * 4. 根据add stage, remove stage更新 新的blob map
-     * TODO(QingZhiLiangCheng): 给commit加入branch name属性 呃呃
+     * 5. 记得删除stage中更新过的文件的指针
+     * TODO(QingZhiLiangCheng): 给commit或HEAD加入branch name属性 呃呃
      */
     public void commit(String commitMsg) {
+        List<String> addStageFiles = addStage.getFiles();
+        List<String> removeStageFiles = removeStage.getFiles();
+        if (addStageFiles.isEmpty() && removeStageFiles.isEmpty()) {
+            throw new GitletException("No changes added to the commit.");
+        }
+        if (commitMsg == null || commitMsg.isEmpty()) {
+            throw new GitletException("Please enter a commit message.");
+        }
         Commit headCommit = getHeadCommit();
         HashMap<String, String> oldHashMap = headCommit.getBlobMap();
-        HashMap<String, String> newHashMap = updateHashMap(oldHashMap);
+        HashMap<String, String> newHashMap = updateHashMap(oldHashMap, addStageFiles, removeStageFiles);
         Commit newCommit = new Commit(headCommit, commitMsg, newHashMap);
         newCommit.save();
-        addStage.clear();
-        removeStage.clear();
         updateHead(newCommit.getId());
         updateBranch(getHead().getBranchName(), newCommit.getId());
 
@@ -217,8 +227,19 @@ public class Repository {
     /**
      * TODO(QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
      */
-    private HashMap<String, String> updateHashMap(HashMap<String, String> oldHashMap) {
-        return new HashMap<>();
+    private HashMap<String, String> updateHashMap(HashMap<String, String> hashMap,
+                                                  List<String> addStageFiles,
+                                                  List<String> removeStageFiles) {
+        for (String fileName : addStageFiles) {
+            String id = readObject(join(ADD_STAGE_DIR, fileName), Pointer.class).next;
+            hashMap.put(fileName, id);
+            addStage.delete(fileName);
+        }
+        for (String fileName : removeStageFiles) {
+            hashMap.remove(fileName);
+            removeStage.delete(fileName);
+        }
+        return hashMap;
     }
 
 

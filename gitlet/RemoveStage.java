@@ -1,8 +1,10 @@
 package gitlet;
 
 import java.io.File;
+import java.util.List;
 
 import static gitlet.Utils.join;
+import static gitlet.Utils.plainFilenamesIn;
 
 /**
  * TODO(QingZhiLiangCheng): removeStage manager.
@@ -30,6 +32,19 @@ public class RemoveStage {
         join(path,fileName).delete();
     }
 
-    public void clear() {
+
+    /**
+     * TODO(QingZhiLiangCheng) 获取removeStage中的文件列表
+     */
+    public List<String> getFiles() {
+        return plainFilenamesIn(path);
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 删除文件
+     * @param fileName
+     */
+    public void delete(String fileName) {
+        join(path, fileName).delete();
     }
 }

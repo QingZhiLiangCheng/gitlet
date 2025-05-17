@@ -1,9 +1,9 @@
 package gitlet;
 
 import java.io.File;
+import java.util.List;
 
-import static gitlet.Utils.join;
-import static gitlet.Utils.writeObject;
+import static gitlet.Utils.*;
 
 /**
  * TODO(QingZhiLiangCheng): addStage manager.
@@ -40,6 +40,19 @@ public class AddStage {
         writeObject(addPath, blobPointer);
     }
 
-    public void clear() {
+
+    /**
+     * TODO(QingZhiLiangCheng) 获取addStage中的文件列表
+     */
+    public List<String> getFiles() {
+        return plainFilenamesIn(path);
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 删除文件
+     * @param fileName
+     */
+    public void delete(String fileName) {
+        join(path, fileName).delete();
     }
 }
