@@ -367,12 +367,22 @@ public class Repository {
     }
 
     /**
-     * TODO(ChengShi): remove branch
+     *  Done[Completed on 2025-05-18](ChengShi): remove branch
      * 删除指定名称的分支。
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
     public void removeBranch(String branchName) {
+        File branchFile = join(HEADS_DIR, branchName);
+        if (!branchFile.exists()) {
+            throw new GitletException(branchName + " does not exist.");
+        }
 
+        String currentBranch = getHead().getBranchName();
+        if (branchName.equals(currentBranch)) {
+            throw new GitletException("Cannot remove the current branch.");
+        }
+
+        branchFile.delete();
     }
 
     /**
