@@ -58,6 +58,7 @@ public class Main {
                 break;
             case "status":
                 // TODO(ChengShi: status): 处理 `status` 命令
+                repository.status();
                 break;
             case "checkout":
                 // TODO(QingZhiLiangCheng): 处理 `checkout` 命令

@@ -283,6 +283,40 @@ public class Repository {
     }
 
     /**
+     * TODO(ChengShi): status command
+     * TODO(ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
+     * Branches: 显示当前存在的分支 并用*标记当前分支
+     * Staged Files: 显示已暂存待添加的文件
+     * Remove Files: 显示已暂存待删除的文件
+     * 各部分之间有一个空行，整个状态也以空行结尾。
+     * 条目应按字典顺序列出，使用 Java 字符串比较顺序（星号不计算）
+     * 有需要的方法等自己加在合适的位置就行
+     */
+    /*
+     * 官方example
+     * === Branches ===
+     * *master
+     * other-branch
+     *
+     * === Staged Files ===
+     * wug.txt
+     * wug2.txt
+     *
+     * === Removed Files ===
+     * goodbye.txt
+     *
+     * === Modifications Not Staged For Commit ===
+     * junk.txt (deleted)
+     * wug3.txt (modified)
+     *
+     * === Untracked Files ===
+     * random.stuff
+     *
+     */
+    public void status() {
+    }
+
+    /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
      */
     private void printCommitLog(Commit commit) {
@@ -422,4 +456,6 @@ public class Repository {
     private void overWriteFileWithBlob(File targetFile, String content) {
         writeContents(targetFile, content);
     }
+
+
 }
