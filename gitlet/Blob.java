@@ -81,7 +81,7 @@ public class Blob implements Serializable {
     }
 
     /**
-     * TODO(ChengShi)
+     * Done(ChengShi)
      */
     public static String getContentFromId(String blobId) {
         return readContentsAsString(join(Repository.BLOBS_DIR, blobId));

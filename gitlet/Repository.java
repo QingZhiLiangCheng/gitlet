@@ -2,11 +2,12 @@ package gitlet;
 
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static gitlet.Utils.*;
 import static java.lang.System.exit;
+
+import java.util.List;
 
 
 /**
@@ -314,6 +315,38 @@ public class Repository {
      *
      */
     public void showStatus() {
+        // === Branches ===
+        System.out.println("=== Branches ===");
+        List<String> branches = plainFilenamesIn(HEADS_DIR);
+        String currentBranch = getHead().getBranchName();
+        Collections.sort(branches);
+
+        for (String branch : branches) {
+            if (branch.equals(currentBranch)) {
+                System.out.println("*" + branch);
+            } else {
+                System.out.println(branch);
+            }
+        }
+        System.out.println();
+
+        // === Staged Files ===
+        System.out.println("=== Staged Files ===");
+        List<String> stagedFiles = addStage.getFiles();
+        Collections.sort(stagedFiles);
+        for (String file : stagedFiles) {
+            System.out.println(file);
+        }
+        System.out.println();
+
+        // === Removed Files ===
+        System.out.println("=== Removed Files ===");
+        List<String> removedFiles = removeStage.getFiles();
+        Collections.sort(removedFiles);
+        for (String file : removedFiles) {
+            System.out.println(file);
+        }
+        System.out.println();
     }
 
 
@@ -325,6 +358,7 @@ public class Repository {
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
+
     }
 
     /**
