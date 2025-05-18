@@ -58,14 +58,15 @@ public class Main {
                 break;
             case "status":
                 // TODO(ChengShi: status): 处理 `status` 命令
-                repository.status();
+                repository.showStatus();
                 break;
             case "checkout":
                 // TODO(QingZhiLiangCheng): 处理 `checkout` 命令
                 repository.checkout(args);
                 break;
             case "branch":
-                // TODO(QingZhiLiangCheng): 处理 `branch [branch name]` 命令
+                // TODO(ChengShi): 处理 `branch [branch name]` 命令
+                repository.createBranch(args[1]);
                 break;
             case "rm-branch":
                 // TODO(QingZhiLiangCheng): 处理 `rm-branch [branch name]` 命令

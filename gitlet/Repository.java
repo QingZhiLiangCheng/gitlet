@@ -313,7 +313,18 @@ public class Repository {
      * random.stuff
      *
      */
-    public void status() {
+    public void showStatus() {
+    }
+
+
+    /**
+     * TODO(ChengShi):add new branch
+     * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
+     * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
+     * --直到java gitlet.Main checkout branchName 才会切换了分支
+     * 用得到的函数应该是都写过了 如果没有的话再自己加新的
+     */
+    public void createBranch(String newBranchName) {
     }
 
     /**
@@ -456,6 +467,7 @@ public class Repository {
     private void overWriteFileWithBlob(File targetFile, String content) {
         writeContents(targetFile, content);
     }
+
 
 
 }
