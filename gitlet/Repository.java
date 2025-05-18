@@ -284,8 +284,8 @@ public class Repository {
     }
 
     /**
-     * TODO(ChengShi): status command
-     * TODO(ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
+     * Done[Completed on 2025-05-18](ChengShi): status command
+     * Done[Completed on 2025-05-18](ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
      * Branches: 显示当前存在的分支 并用*标记当前分支
      * Staged Files: 显示已暂存待添加的文件
      * Remove Files: 显示已暂存待删除的文件
@@ -351,14 +351,19 @@ public class Repository {
 
 
     /**
-     * TODO(ChengShi):add new branch
+     * Done[Completed on 2025-05-18](ChengShi):add new branch
      * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
      * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
      * --直到java gitlet.Main checkout branchName 才会切换了分支
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
-
+        File newBranch=join(HEADS_DIR,newBranchName);
+        if (newBranch.exists()) {
+            throw new GitletException(  newBranchName + " already exists.");
+        }
+        String currentCommitId = getHead().getBranchName();
+        writeContents(newBranch, currentCommitId);
     }
 
     /**
@@ -367,6 +372,7 @@ public class Repository {
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
     public void removeBranch(String branchName) {
+
     }
 
     /**
