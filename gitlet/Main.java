@@ -69,8 +69,11 @@ public class Main {
                 repository.createBranch(args[1]);
                 break;
             case "rm-branch":
-                // TODO(QingZhiLiangCheng): 处理 `rm-branch [branch name]` 命令
+                // TODO(ChengShi): 处理 `rm-branch [branch name]` 命令
+                repository.removeBranch(args[1]);
                 break;
+            case "merge":
+                // TODO(QingZhiLiangCheng): 处理 `merge [branch name]` 命令
             // TODO(QingZhiLiangCheng)[Completed on 2025-05-11]: NO command
             default:
                 System.out.println("No command with that name exists.");

@@ -328,6 +328,14 @@ public class Repository {
     }
 
     /**
+     * TODO(ChengShi): remove branch
+     * 删除指定名称的分支。
+     * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
+     */
+    public void removeBranch(String branchName) {
+    }
+
+    /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
      */
     private void printCommitLog(Commit commit) {
