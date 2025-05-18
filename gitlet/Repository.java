@@ -332,8 +332,8 @@ public class Repository {
 
         // === Staged Files ===
         System.out.println("=== Staged Files ===");
-        List<String> stagedFiles = addStage.getFiles();
-        Collections.sort(stagedFiles);
+        List<String> stagedFiles = new ArrayList<>(addStage.getFiles());
+        stagedFiles.sort(String.CASE_INSENSITIVE_ORDER);//忽略大小写
         for (String file : stagedFiles) {
             System.out.println(file);
         }
@@ -341,8 +341,8 @@ public class Repository {
 
         // === Removed Files ===
         System.out.println("=== Removed Files ===");
-        List<String> removedFiles = removeStage.getFiles();
-        Collections.sort(removedFiles);
+        List<String> removedFiles = new ArrayList<>(removeStage.getFiles());
+        removedFiles.sort(String.CASE_INSENSITIVE_ORDER);
         for (String file : removedFiles) {
             System.out.println(file);
         }
