@@ -25,20 +25,6 @@ public class Branch extends Pointer {
         this.branchName = branchName;
     }
 
-    /**
-     * TODO(QingZhiLiangCheng): 是否存在该branch
-     */
-    public static boolean contains(String branchName) {
-        return false;
-    }
-
-    /**
-     * TODO(QingZhiLiangCheng): 根据branch name获取Branch
-     */
-    public static Branch fromBranchName(String branchName) {
-        return null;
-    }
-
     public String getNext() {
         return super.next;
     }
@@ -47,14 +33,5 @@ public class Branch extends Pointer {
         return branchName;
     }
 
-    /**
-     * Done[Completed on 2025-05-10](QingZhiLiangCheng) store branch <br>
-     * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
-     * 写入 `.gitlet/refs/heads/master` {@link Utils#writeObject(File, Serializable)}<br>
-     * 写入 File地址为 join(HEADS_DIR,branchName)
-     */
-    public void store() {
-        File branchHead = join(Repository.HEADS_DIR, branchName);
-        writeObject(branchHead, this);
-    }
+
 }

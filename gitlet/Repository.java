@@ -56,36 +56,45 @@ public class Repository {
      * the objects directory<br>
      * 包含commits 和 blogs
      */
-    public static File OBJECTS_DIR;
-    public static File COMMIT_DIR;
-    public static File BLOBS_DIR;
+    public static File OBJECTS_DIR =join(GITLET_DIR, "objects");
+
 
     /**
      * the refs directory.<br>
      * 包含heads 和 HEAD<br>
      * - heads 存分支
      */
-    public static File REFS_DIR;
-    public static File HEADS_DIR;
-    public static File HEAD_POINT;
+    public static File REFS_DIR = join(GITLET_DIR, "refs");
+
 
     /**
      * TODO(QingZhiLiangCheng): 重构
      * 增加add manager, remove manager, blob manager, commit manager, head manager,branch manager来管理对于仓库的操作
      * commit, head, branch, blob 等类仅仅作为实体
      */
-    public static AddStageManager addStageManager;
-    public static File REMOVE_STAGE_DIR;
-    public static RemoveStage removeStage;
+    private final CommitManager commitManager;
+
+    private final BlobManager blobManager;
+
+    private final AddStageManager addStageManager;
+
+    private final HeadManager headManager;
+
+    private final BranchManager branchManager;
+    public static RemoveStageManager removeStageManager;
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
-     * refactor(QingZhiLiangCheng)
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      */
     public Repository() {
         CWD = new File(System.getProperty("user.dir"));
+        commitManager = new CommitManager();
+        blobManager = new BlobManager();
+        headManager = new HeadManager();
+        branchManager = new BranchManager();
         addStageManager = new AddStageManager();
-        removeStage = new RemoveStage();
+        removeStageManager = new RemoveStageManager();
     }
 
     /**
@@ -97,23 +106,24 @@ public class Repository {
     private void configDIRS() {
         GITLET_DIR = join(CWD, ".gitlet");
         OBJECTS_DIR = join(GITLET_DIR, "objects");
-        COMMIT_DIR = join(OBJECTS_DIR, "commits");
-        BLOBS_DIR = join(OBJECTS_DIR, "blobs");
+
+
         REFS_DIR = join(GITLET_DIR, "refs");
-        HEADS_DIR = join(REFS_DIR, "heads");
-        HEAD_POINT = join(REFS_DIR, "HEAD");
+
+
         ADD_STAGE_DIR = join(GITLET_DIR, "addstage");
         REMOVE_STAGE_DIR = join(GITLET_DIR, "removestage");
     }*/
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * 架构图在`READEME.md`中都画好了<br>
      * 如果存在.gitlet 视为错误 退出程序 打印错误信息<br>
      * "A Gitlet version-control system already exists in the current directory."<br>
-     * 创建各个文件夹{@link #createInitDir()}<br>
-     * 创建 Commit 0 {@link Commit#Commit()}<br>
-     * 存储commit {@link Commit#save()}<br>
+     * 创建各个文件夹
+     * 创建 Commit 0<br>
+     * 存储commit
      * 创建master和HEAD {@link #initReference(String)} ()}<br>
      */
     public void init() {
@@ -123,12 +133,13 @@ public class Repository {
         }
         createInitDir();
         Commit initCommit = new Commit();
-        initCommit.save();
+        commitManager.saveCommit(initCommit);
         initReference(initCommit.getId());
     }
 
     /**
      * Done[Completed on 2025-05-14](QingZhiLiangCheng) add command<br>
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * <p>
      * 1.文件名是空？ 抛异常{@link GitletException} "Please enter a file name."<br>
      * 2.工作目录中不存在此文件？<br>
@@ -153,8 +164,8 @@ public class Repository {
             throw new GitletException("File does not exist.");
         }
 
-        if (removeStage.exist(addFileName)) {
-            removeStage.remove(addFileName);
+        if (removeStageManager.exist(addFileName)) {
+            removeStageManager.remove(addFileName);
         }
 
         if (addStageManager.exist(addFileName)) {
@@ -175,7 +186,7 @@ public class Repository {
             }
         }
         Blob blob = new Blob(fileAddedContent);
-        blob.save();
+        blobManager.saveBlob(blob);
         BlobPointer blobPointer = new BlobPointer(blob.getId());
         addStageManager.save(addFileName, blobPointer);
 
@@ -183,6 +194,7 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): commit command
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * 1. add stage, remove stage为空 -- "No changes added to the commit."
      * 2. commit message 为空 -- "Please enter a commit message."
      * 3. commit的blob map里面要存这个版本所有的文件的位置(包括之前已经commit过的文件）
@@ -192,7 +204,7 @@ public class Repository {
      */
     public void commit(String commitMsg) {
         List<String> addStageFiles = addStageManager.getFiles();
-        List<String> removeStageFiles = removeStage.getFiles();
+        List<String> removeStageFiles = removeStageManager.getFiles();
         if (addStageFiles.isEmpty() && removeStageFiles.isEmpty()) {
             throw new GitletException("No changes added to the commit.");
         }
@@ -203,14 +215,15 @@ public class Repository {
         HashMap<String, String> oldHashMap = headCommit.getBlobMap();
         HashMap<String, String> newHashMap = updateHashMap(oldHashMap, addStageFiles, removeStageFiles);
         Commit newCommit = new Commit(headCommit, commitMsg, newHashMap);
-        newCommit.save();
-        updateHead(newCommit.getId());
-        updateBranch(getHead().getBranchName(), newCommit.getId());
+        commitManager.saveCommit(newCommit);
+        headManager.updateHead(newCommit.getId());
+        branchManager.updateBranch(headManager.getHead().getBranchName(), newCommit.getId());
 
     }
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCHeng): remove files
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * 1. 文件名是空 "Please enter a file name."
      * 2. 在addStage中不存在 在commit中不存在 - "No reason to remove the file."
      * 3. 在addStage中存在 -- 删除
@@ -231,7 +244,7 @@ public class Repository {
             addStageManager.delete(removeFileName);
         }
         if (headCommitBlobMap.containsKey(removeFileName)) {
-            removeStage.save(removeFileName);
+            removeStageManager.save(removeFileName);
             restrictedDelete(new File(CWD, removeFileName));
         }
 
@@ -239,6 +252,7 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): print log
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * example format 官网上的
      * ===
      * commit a0da1ea5a15ab613bf9961fd86f010cf74c7ee48
@@ -265,7 +279,7 @@ public class Repository {
         Commit commit = getHeadCommit();
         while (!commit.getParents().isEmpty()) {
             printCommitLog(commit);
-            commit = Commit.formId(commit.getParents().get(0));
+            commit = commitManager.getCommit(commit.getParents().get(0));
         }
         printCommitLog(commit);
     }
@@ -292,8 +306,9 @@ public class Repository {
     }
 
     /**
-     * Done[Completed on 2025-05-18](ChengShi): status command
-     * Done[Completed on 2025-05-18](ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
+     * TODO(ChengShi): status command
+     * TODO(ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * Branches: 显示当前存在的分支 并用*标记当前分支
      * Staged Files: 显示已暂存待添加的文件
      * Remove Files: 显示已暂存待删除的文件
@@ -323,7 +338,7 @@ public class Repository {
      *
      */
     public void showStatus() {
-        // === Branches ===
+       /* // === Branches ===
         System.out.println("=== Branches ===");
         List<String> branches = plainFilenamesIn(HEADS_DIR);
         String currentBranch = getHead().getBranchName();
@@ -354,33 +369,33 @@ public class Repository {
         for (String file : removedFiles) {
             System.out.println(file);
         }
-        System.out.println();
+        System.out.println();*/
     }
 
 
     /**
-     * Done[Completed on 2025-05-18](ChengShi):add new branch
+     * TODO(ChengShi):add new branch
      * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
      * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
      * --直到java gitlet.Main checkout branchName 才会切换了分支
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
-        File newBranch = join(HEADS_DIR, newBranchName);
+       /* File newBranch = join(HEADS_DIR, newBranchName);
         if (newBranch.exists()) {
             throw new GitletException(newBranchName + " already exists.");
         }
         String currentCommitId = getHead().getBranchName();
-        writeContents(newBranch, currentCommitId);
+        writeContents(newBranch, currentCommitId);*/
     }
 
     /**
-     * Done[Completed on 2025-05-18](ChengShi): remove branch
+     * TODO(ChengShi): remove branch
      * 删除指定名称的分支。
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
     public void removeBranch(String branchName) {
-        File branchFile = join(HEADS_DIR, branchName);
+/*        File branchFile = join(HEADS_DIR, branchName);
         if (!branchFile.exists()) {
             throw new GitletException(branchName + " does not exist.");
         }
@@ -390,7 +405,7 @@ public class Repository {
             throw new GitletException("Cannot remove the current branch.");
         }
 
-        branchFile.delete();
+        branchFile.delete();*/
     }
 
     /**
@@ -422,24 +437,6 @@ public class Repository {
 
 
     /**
-     * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储branch pointer指向的位置
-     */
-    private void updateBranch(String branchName, String commitID) {
-        File branchFile = join(HEADS_DIR, branchName);
-        writeObject(branchFile, new Branch(branchName, commitID));
-    }
-
-    /**
-     * Done[Completed on 2025-05-17](QingZhiLiangCheng) 更新并存储head pointer指向的位置
-     */
-    private void updateHead(String commitID) {
-        Head oldHead = getHead();
-        File headFile = join(HEAD_POINT, "HEAD");
-        writeObject(headFile, new Head(oldHead.getBranchName(), commitID));
-    }
-
-
-    /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
      * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      */
@@ -453,7 +450,7 @@ public class Repository {
         }
         for (String fileName : removeStageFiles) {
             hashMap.remove(fileName);
-            removeStage.delete(fileName);
+            removeStageManager.delete(fileName);
         }
         return hashMap;
     }
@@ -461,35 +458,38 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      */
-    private static void createInitDir() {
+    private void createInitDir() {
         GITLET_DIR.mkdirs();
         OBJECTS_DIR.mkdirs();
-        COMMIT_DIR.mkdirs();
-        BLOBS_DIR.mkdirs();
         REFS_DIR.mkdirs();
-        HEADS_DIR.mkdirs();
-        HEAD_POINT.mkdirs();
+
+        commitManager.init();
+        headManager.init();
+        branchManager.init();
         addStageManager.init();
-        REMOVE_STAGE_DIR.mkdirs();
+        removeStageManager.init();
+        blobManager.init();
     }
 
 
     /**
      * Done[Completed on 2025-05-10](ChengShi) 创建master和HEAD<br>
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * 创建Branch master 指向init commit{@link Branch#Branch(String, String)}<br>
-     * 写入.gitlet/refs/haeds/master {@link Branch#store()}<br>
+     * 写入.gitlet/refs/haeds/master
      * 创建HEAD 指向init commit {@link Head#Head(String, String)} )}<br>
-     * 写入.gitlet/HEAD {@link Head#save()}<br>
+     * 写入.gitlet/HEAD
      *
      * @param commitId commitID
      */
-    private static void initReference(String commitId) {
+    private void initReference(String commitId) {
         try {
             Branch master = new Branch("master", commitId);
-            master.store();
+            branchManager.saveBranch(master);
             Head head = new Head("master", commitId);
-            head.save();
+            headManager.saveHead(head);
         } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
         }
@@ -497,17 +497,10 @@ public class Repository {
 
 
     /**
-     * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
-     */
-    private static Head getHead() {
-        return readObject(join(Repository.HEAD_POINT, "HEAD"), Head.class);
-    }
-
-    /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针所指向的Commit对象
      */
-    public static Commit getHeadCommit() {
-        return Commit.formId(getHead().next);
+    public Commit getHeadCommit() {
+        return commitManager.getCommit(headManager.getHead().next);
     }
 
 
@@ -519,7 +512,7 @@ public class Repository {
      * 4. 修改文件
      */
     private void checkoutFileFromCommitId(String commitId, String fileName) {
-        Commit commit = Commit.formId(commitId);
+        Commit commit = commitManager.getCommit(commitId);
         HashMap<String, String> commitBlobMap = commit.getBlobMap();
         if (!commitBlobMap.containsKey(fileName)) {
             throw new GitletException("File does not exist in that commit.");
@@ -547,21 +540,21 @@ public class Repository {
      * 指定分支视为当前分支 (HEAD)
      */
     private void checkoutBranch(String branchName) {
-        if (!Branch.contains(branchName)) {
+        if (!branchManager.contains(branchName)) {
             throw new GitletException("");
         }
-        String headBranchName = getHead().getBranchName();
+        String headBranchName = headManager.getHead().getBranchName();
         if (branchName.equals(headBranchName)) {
             throw new GitletException("");
         }
-        Branch givenBranch = Branch.fromBranchName(branchName);
-        Commit headOfGivenBranchCommit = Commit.formId(givenBranch.getNext());
+        Branch givenBranch = branchManager.getBranchFromName(branchName);
+        Commit headOfGivenBranchCommit = commitManager.getCommit(givenBranch.getNext());
         if (unTrackFileExists(headOfGivenBranchCommit)) {
             throw new GitletException("");
         }
         updateCWD(headOfGivenBranchCommit);
         Head newHeadPointer = new Head(branchName, headOfGivenBranchCommit.getId());
-        newHeadPointer.save();
+        headManager.saveHead(newHeadPointer);
 
     }
 

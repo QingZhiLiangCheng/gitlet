@@ -43,12 +43,33 @@ cd gitlet-test
 ls
 ```
 
+
 ![gitlet_ls.png](note%2Fattachment%2Fgitlet_ls.png)
 
 为了开始使用Gitlet，需要先通过命令初始化一个新的Gitlet仓库.
 
 ```bash
 java gitlet.Main init # 初始化gitlet仓库
+```
+### The implemented command
+```bash
+java gitlet.Main init
+
+java gitlet.Main add [file name]
+
+java gitlet.Main commit [commit message]
+
+java gitlet.Main rm [file name]
+
+java gitlet.Main status
+
+java gitlet.Main log
+
+java gitlet.Main checkout [commit id] -- [file name]
+
+java gitlet.Main branch [branch name]
+
+java gitlet.Main rm-branch [branch name]
 ```
 
 ## Gitlet Design Document
@@ -137,6 +158,72 @@ public class Head extends Pointer {
     private final String branchName;
 }
 ```
+
+**Repository**
+
+Repository类是管理仓库各种操作的类，在这个类中我们明确了gitlet的目录结构, 并且实现了不同的命令操作
+
+最终，我们实现的.gitlet目录如下所示
+```
+gitlet (folder)
+    |── objects (folder)
+        |-- commits (folder)
+        |-- blobs (folder)
+    |── refs (folder)
+        |── heads (folder)
+            |-- master (file)
+            |-- other file      
+        |-- HEAD (folder)
+             |-- HEAD (file)
+    |-- addstage (folder)   
+    |-- removestage (folder)
+```
+
+具体实现上, 我们通过Commit Manager, Head Manager, Branch Manager, Blob Manager, Add Stage Manager, Remove Stage Manager 六个manager分别管理不同实体类在不同精确目录中的操作
+```java
+public class Repository {
+  /**
+   * current working directory.
+   */
+  private static File CWD = new File(System.getProperty("user.dir"));
+  ;
+  /**
+   * the .gitlet directory.
+   */
+  public static File GITLET_DIR = join(CWD, ".gitlet");
+  ;
+
+  /**
+   * the objects directory<br>
+   * 包含commits 和 blogs
+   */
+  public static File OBJECTS_DIR =join(GITLET_DIR, "objects");
+
+
+  /**
+   * the refs directory.<br>
+   * 包含heads 和 HEAD<br>
+   * - heads 存分支
+   */
+  public static File REFS_DIR = join(GITLET_DIR, "refs");
+
+
+  /**
+   * TODO(QingZhiLiangCheng): 重构
+   * 增加add manager, remove manager, blob manager, commit manager, head manager,branch manager来管理对于仓库的操作
+   * commit, head, branch, blob 等类仅仅作为实体
+   */
+  private final CommitManager commitManager;
+  private final BlobManager blobManager;
+  private final AddStageManager addStageManager;
+  private final HeadManager headManager;
+  private final BranchManager branchManager;
+  public static RemoveStageManager removeStageManager;
+}
+```
+
+
+
 
 ### Main
 

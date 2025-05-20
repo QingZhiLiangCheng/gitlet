@@ -40,7 +40,7 @@ public class Blob implements Serializable {
     public Blob(String content) {
         this.content=content;
         this.id=Utils.sha1(content);
-        this.filePath=Utils.join(Repository.BLOBS_DIR, this.id);
+        this.filePath=Utils.join(BlobManager.BLOBS_DIR, this.id);
     }
 
 
@@ -69,21 +69,9 @@ public class Blob implements Serializable {
 
 
     /**
-     * Done[Completed on 2025-05-15](ChengShi): 在filePath写入content
-     * {@link Utils#writeContents(File, Object...)}
-     */
-    public void save() {
-        File parentDir = this.filePath.getParentFile();
-        if (!parentDir.exists()) {
-            parentDir.mkdirs();  // 创建必要的父目录
-        }
-        Utils.writeContents(this.filePath, this.content);
-    }
-
-    /**
      * Done(ChengShi)
      */
     public static String getContentFromId(String blobId) {
-        return readContentsAsString(join(Repository.BLOBS_DIR, blobId));
+        return readContentsAsString(join(BlobManager.BLOBS_DIR, blobId));
     }
 }

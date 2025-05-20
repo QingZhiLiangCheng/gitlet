@@ -20,17 +20,6 @@ public class Head extends Pointer{
     }
 
 
-    /**
-     * Done[Completed on 2025-05-10](QingZhiLiangCheng)
-     * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
-     * 写入HEAD_POINT {@link Utils#writeObject(File, Serializable)}
-     */
-    public void save() {
-        File path = join(Repository.HEAD_POINT,"HEAD");
-        writeObject(path, this);
-    }
-
-
     public String getBranchName() {
         return branchName;
     }
