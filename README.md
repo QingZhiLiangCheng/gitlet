@@ -186,12 +186,12 @@ public class Repository {
    * current working directory.
    */
   private static File CWD = new File(System.getProperty("user.dir"));
-  ;
+  
   /**
    * the .gitlet directory.
    */
   public static File GITLET_DIR = join(CWD, ".gitlet");
-  ;
+  
 
   /**
    * the objects directory<br>
