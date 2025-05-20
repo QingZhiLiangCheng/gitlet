@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author QingZhiLiangCheng
  * @since 2025-05-10
+ * 重构: 2025-05-20
  */
 public class Repository {
 
@@ -43,11 +44,13 @@ public class Repository {
     /**
      * current working directory.
      */
-    private static File CWD;
+    private static File CWD = new File(System.getProperty("user.dir"));
+    ;
     /**
      * the .gitlet directory.
      */
-    private static File GITLET_DIR;
+    public static File GITLET_DIR = join(CWD, ".gitlet");
+    ;
 
     /**
      * the objects directory<br>
@@ -67,22 +70,21 @@ public class Repository {
     public static File HEAD_POINT;
 
     /**
-     * the stage directory.
+     * TODO(QingZhiLiangCheng): 重构
+     * 增加add manager, remove manager, blob manager, commit manager, head manager,branch manager来管理对于仓库的操作
+     * commit, head, branch, blob 等类仅仅作为实体
      */
-    public static File ADD_STAGE_DIR;
-    public static AddStage addStage;
+    public static AddStageManager addStageManager;
     public static File REMOVE_STAGE_DIR;
     public static RemoveStage removeStage;
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 构造函数<br>
-     * 创建CWD<br>
-     * 然后调用 {@link #configDIRS()}
+     * refactor(QingZhiLiangCheng)
      */
     public Repository() {
         CWD = new File(System.getProperty("user.dir"));
-        configDIRS();
-        addStage = new AddStage();
+        addStageManager = new AddStageManager();
         removeStage = new RemoveStage();
     }
 
@@ -90,6 +92,8 @@ public class Repository {
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): config directory
      * 配置好每个文件夹的位置
      */
+
+    /*
     private void configDIRS() {
         GITLET_DIR = join(CWD, ".gitlet");
         OBJECTS_DIR = join(GITLET_DIR, "objects");
@@ -100,7 +104,7 @@ public class Repository {
         HEAD_POINT = join(REFS_DIR, "HEAD");
         ADD_STAGE_DIR = join(GITLET_DIR, "addstage");
         REMOVE_STAGE_DIR = join(GITLET_DIR, "removestage");
-    }
+    }*/
 
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): init<br>
@@ -153,8 +157,8 @@ public class Repository {
             removeStage.remove(addFileName);
         }
 
-        if (addStage.exist(addFileName)) {
-            addStage.remove(addFileName);
+        if (addStageManager.exist(addFileName)) {
+            addStageManager.remove(addFileName);
         }
 
         String fileAddedContent = readContentsAsString(fileAdded);
@@ -173,7 +177,7 @@ public class Repository {
         Blob blob = new Blob(fileAddedContent);
         blob.save();
         BlobPointer blobPointer = new BlobPointer(blob.getId());
-        addStage.save(addFileName, blobPointer);
+        addStageManager.save(addFileName, blobPointer);
 
     }
 
@@ -187,7 +191,7 @@ public class Repository {
      * TODO(QingZhiLiangCheng): 给commit或HEAD加入branch name属性 呃呃
      */
     public void commit(String commitMsg) {
-        List<String> addStageFiles = addStage.getFiles();
+        List<String> addStageFiles = addStageManager.getFiles();
         List<String> removeStageFiles = removeStage.getFiles();
         if (addStageFiles.isEmpty() && removeStageFiles.isEmpty()) {
             throw new GitletException("No changes added to the commit.");
@@ -219,12 +223,12 @@ public class Repository {
         }
         Commit headCommit = getHeadCommit();
         HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
-        if (!addStage.exist(removeFileName) && !headCommitBlobMap.containsKey(removeFileName)) {
+        if (!addStageManager.exist(removeFileName) && !headCommitBlobMap.containsKey(removeFileName)) {
             throw new GitletException("No reason to remove the file.");
         }
 
-        if (addStage.exist(removeFileName)) {
-            addStage.delete(removeFileName);
+        if (addStageManager.exist(removeFileName)) {
+            addStageManager.delete(removeFileName);
         }
         if (headCommitBlobMap.containsKey(removeFileName)) {
             removeStage.save(removeFileName);
@@ -336,7 +340,7 @@ public class Repository {
 
         // === Staged Files ===
         System.out.println("=== Staged Files ===");
-        List<String> stagedFiles = new ArrayList<>(addStage.getFiles());
+        List<String> stagedFiles = new ArrayList<>(addStageManager.getFiles());
         stagedFiles.sort(String.CASE_INSENSITIVE_ORDER);//忽略大小写
         for (String file : stagedFiles) {
             System.out.println(file);
@@ -362,16 +366,16 @@ public class Repository {
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
-        File newBranch=join(HEADS_DIR,newBranchName);
+        File newBranch = join(HEADS_DIR, newBranchName);
         if (newBranch.exists()) {
-            throw new GitletException(  newBranchName + " already exists.");
+            throw new GitletException(newBranchName + " already exists.");
         }
         String currentCommitId = getHead().getBranchName();
         writeContents(newBranch, currentCommitId);
     }
 
     /**
-     *  Done[Completed on 2025-05-18](ChengShi): remove branch
+     * Done[Completed on 2025-05-18](ChengShi): remove branch
      * 删除指定名称的分支。
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
@@ -437,14 +441,15 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 根据add stage, remove stage 创建更新的 blob map
+     * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      */
     private HashMap<String, String> updateHashMap(HashMap<String, String> hashMap,
                                                   List<String> addStageFiles,
                                                   List<String> removeStageFiles) {
         for (String fileName : addStageFiles) {
-            String id = readObject(join(ADD_STAGE_DIR, fileName), Pointer.class).next;
+            String id = addStageManager.getFilePointerToBlob(fileName).next;
             hashMap.put(fileName, id);
-            addStage.delete(fileName);
+            addStageManager.delete(fileName);
         }
         for (String fileName : removeStageFiles) {
             hashMap.remove(fileName);
@@ -465,7 +470,7 @@ public class Repository {
         REFS_DIR.mkdirs();
         HEADS_DIR.mkdirs();
         HEAD_POINT.mkdirs();
-        ADD_STAGE_DIR.mkdirs();
+        addStageManager.init();
         REMOVE_STAGE_DIR.mkdirs();
     }
 
@@ -555,7 +560,7 @@ public class Repository {
             throw new GitletException("");
         }
         updateCWD(headOfGivenBranchCommit);
-        Head newHeadPointer = new Head(branchName,headOfGivenBranchCommit.getId());
+        Head newHeadPointer = new Head(branchName, headOfGivenBranchCommit.getId());
         newHeadPointer.save();
 
     }
@@ -576,9 +581,6 @@ public class Repository {
     private boolean unTrackFileExists(Commit commit) {
         return false;
     }
-
-
-
 
 
 }
