@@ -1,6 +1,5 @@
 package gitlet;
 
-import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 
@@ -26,7 +25,7 @@ public class Head extends Pointer{
      * FIXME(QingZhiLiangCheng) 没想好用writeObject方法还是writeContent方法
      * 写入HEAD_POINT {@link Utils#writeObject(File, Serializable)}
      */
-    public void score() {
+    public void save() {
         File path = join(Repository.HEAD_POINT,"HEAD");
         writeObject(path, this);
     }

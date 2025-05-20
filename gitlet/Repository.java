@@ -280,6 +280,10 @@ public class Repository {
             fileName = args[3];
             String commitId = args[1];
             checkoutFileFromCommitId(commitId, fileName);
+        } else if (args.length == 2) {
+            //java gitlet.Main checkout [branch name】
+            String branchName = args[1];
+            checkoutBranch(branchName);
         }
     }
 
@@ -453,7 +457,7 @@ public class Repository {
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 创建目录结构<br>
      */
-    public static void createInitDir() {
+    private static void createInitDir() {
         GITLET_DIR.mkdirs();
         OBJECTS_DIR.mkdirs();
         COMMIT_DIR.mkdirs();
@@ -471,7 +475,7 @@ public class Repository {
      * 创建Branch master 指向init commit{@link Branch#Branch(String, String)}<br>
      * 写入.gitlet/refs/haeds/master {@link Branch#store()}<br>
      * 创建HEAD 指向init commit {@link Head#Head(String, String)} )}<br>
-     * 写入.gitlet/HEAD {@link Head#score()}<br>
+     * 写入.gitlet/HEAD {@link Head#save()}<br>
      *
      * @param commitId commitID
      */
@@ -480,7 +484,7 @@ public class Repository {
             Branch master = new Branch("master", commitId);
             master.store();
             Head head = new Head("master", commitId);
-            head.score();
+            head.save();
         } catch (GitletException e) {
             throw new RuntimeException("初始化Master和Head失败: " + e.getMessage(), e);
         }
@@ -490,7 +494,7 @@ public class Repository {
     /**
      * Done[Completed on 2025-05-11](QingZhiLiangCheng): 获取HEAD指针
      */
-    public static Head getHead() {
+    private static Head getHead() {
         return readObject(join(Repository.HEAD_POINT, "HEAD"), Head.class);
     }
 
@@ -506,6 +510,8 @@ public class Repository {
      * TODO(QingZhiLiangCheng):从指定的提交中检出（恢复）某个文件到工作目录 不修改暂存区
      * 1. 判断commit是否存在？
      * 2. 判断fileName是否存在？ - "File does not exist in that commit."
+     * 3. 获取old commit中该文件的blob中的内容
+     * 4. 修改文件
      */
     private void checkoutFileFromCommitId(String commitId, String fileName) {
         Commit commit = Commit.formId(commitId);
@@ -525,6 +531,53 @@ public class Repository {
     private void overWriteFileWithBlob(File targetFile, String content) {
         writeContents(targetFile, content);
     }
+
+    /**
+     * TODO(QingZhiLiangCheng) java gitlet.Main checkout [branch name]
+     * 判断指定分支是否存在 - "No such branch exists."
+     * 指定分支branchName与当前Head的branchName相同 - "No need to checkout the current branch."
+     * 将指定分支头部提交的所有文件放入工作目录，并覆盖已存在的文件版本（如果存在）
+     * 所有在当前分支中跟踪但在签出分支中不存在的文件都将被删除
+     * 如果签出分支中的文件与当前工作目录中未被追踪（untracked）的文件发生冲突 - “There is an untracked file in the way; delete it, or add and commit it first.”
+     * 指定分支视为当前分支 (HEAD)
+     */
+    private void checkoutBranch(String branchName) {
+        if (!Branch.contains(branchName)) {
+            throw new GitletException("");
+        }
+        String headBranchName = getHead().getBranchName();
+        if (branchName.equals(headBranchName)) {
+            throw new GitletException("");
+        }
+        Branch givenBranch = Branch.fromBranchName(branchName);
+        Commit headOfGivenBranchCommit = Commit.formId(givenBranch.getNext());
+        if (unTrackFileExists(headOfGivenBranchCommit)) {
+            throw new GitletException("");
+        }
+        updateCWD(headOfGivenBranchCommit);
+        Head newHeadPointer = new Head(branchName,headOfGivenBranchCommit.getId());
+        newHeadPointer.save();
+
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 更新工作区中文件
+     * 这里选择了先清空CWD中的文件
+     * 然后再根据迁出分支的commit添加文件
+     */
+    private void updateCWD(Commit headOfGivenBranchCommit) {
+    }
+
+
+    /**
+     * TODO(ChengShi): 检查当前工作目录中是否有未被track的文件
+     * 未被track是指该文件没有被提交到版本中
+     */
+    private boolean unTrackFileExists(Commit commit) {
+        return false;
+    }
+
+
 
 
 

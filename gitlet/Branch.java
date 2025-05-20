@@ -25,6 +25,20 @@ public class Branch extends Pointer {
         this.branchName = branchName;
     }
 
+    /**
+     * TODO(QingZhiLiangCheng): 是否存在该branch
+     */
+    public static boolean contains(String branchName) {
+        return false;
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 根据branch name获取Branch
+     */
+    public static Branch fromBranchName(String branchName) {
+        return null;
+    }
+
     public String getNext() {
         return super.next;
     }
