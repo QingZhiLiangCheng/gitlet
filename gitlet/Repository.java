@@ -56,7 +56,7 @@ public class Repository {
      * the objects directory<br>
      * 包含commits 和 blogs
      */
-    public static File OBJECTS_DIR =join(GITLET_DIR, "objects");
+    public static File OBJECTS_DIR = join(GITLET_DIR, "objects");
 
 
     /**
@@ -541,16 +541,16 @@ public class Repository {
      */
     private void checkoutBranch(String branchName) {
         if (!branchManager.contains(branchName)) {
-            throw new GitletException("");
+            throw new GitletException("No such branch exists.");
         }
         String headBranchName = headManager.getHead().getBranchName();
         if (branchName.equals(headBranchName)) {
-            throw new GitletException("");
+            throw new GitletException("No need to checkout the current branch.");
         }
         Branch givenBranch = branchManager.getBranchFromName(branchName);
         Commit headOfGivenBranchCommit = commitManager.getCommit(givenBranch.getNext());
         if (unTrackFileExists(headOfGivenBranchCommit)) {
-            throw new GitletException("");
+            throw new GitletException("There is an untracked file in the way; delete it, or add and commit it first.");
         }
         updateCWD(headOfGivenBranchCommit);
         Head newHeadPointer = new Head(branchName, headOfGivenBranchCommit.getId());
@@ -564,6 +564,18 @@ public class Repository {
      * 然后再根据迁出分支的commit添加文件
      */
     private void updateCWD(Commit headOfGivenBranchCommit) {
+        List<String> workFileNames = plainFilenamesIn(CWD);
+        for (String workFile : workFileNames) {
+            restrictedDelete(join(CWD, workFile));
+        }
+        HashMap<String, String> headOfGivenBranchCommitHashMap = headOfGivenBranchCommit.getBlobMap();
+        Set<String> trackedFiles = headOfGivenBranchCommitHashMap.keySet();
+        for (String trackedFile : trackedFiles) {
+            File workFile = join(CWD, trackedFile);
+            String boshId = headOfGivenBranchCommitHashMap.get(trackedFile);
+            String content = Blob.getContentFromId(boshId);
+            writeObject(workFile, content);
+        }
     }
 
 
