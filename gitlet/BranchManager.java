@@ -16,6 +16,7 @@ import static gitlet.Utils.writeObject;
  * @author QingZhiLiangCheng
  */
 public class BranchManager {
+
     private final File HEADS_DIR;
 
     BranchManager() {
@@ -24,6 +25,7 @@ public class BranchManager {
     public File getHEADS_DIR() {
         return HEADS_DIR;
     }
+
     /**
      * Done[Completed on 2025-05-20](QingZhiLiangCheng)
      */
@@ -66,4 +68,42 @@ public class BranchManager {
         return null;
     }
 
+
+
+    /**
+     * Done[Completed on 2025-05-21](ChengShi):add new branch
+     * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
+     * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
+     * --直到java gitlet.Main checkout branchName 才会切换了分支
+     * 用得到的函数应该是都写过了 如果没有的话再自己加新的
+     */
+    public void createBranch(String newBranchName) {
+        File newBranch = join(HEADS_DIR, newBranchName);
+        if (newBranch.exists()) {
+            throw new GitletException(newBranchName + " already exists.");
+        }
+        HeadManager headManager = new HeadManager();
+        String currentCommitId = headManager.getHead().next;
+        writeContents(newBranch, currentCommitId);
+    }
+
+    /**
+     * Done[Completed on 2025-05-21](ChengShi): remove branch
+     * 删除指定名称的分支。
+     * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
+     */
+    public void removeBranch(String branchName) {
+        File branchFile = join(HEADS_DIR, branchName);
+        if (!branchFile.exists()) {
+            throw new GitletException(branchName + " does not exist.");
+        }
+        HeadManager headManager = new HeadManager();
+        String currentBranch = headManager.getHead().getBranchName();
+        if (branchName.equals(currentBranch)) {
+            throw new GitletException("Cannot remove the current branch.");
+        }
+
+        branchFile.delete();
+    }
 }
+
