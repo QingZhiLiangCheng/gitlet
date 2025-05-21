@@ -200,7 +200,7 @@ public class Repository {
      * 3. commit的blob map里面要存这个版本所有的文件的位置(包括之前已经commit过的文件）
      * 4. 根据add stage, remove stage更新 新的blob map
      * 5. 记得删除stage中更新过的文件的指针
-     * TODO(QingZhiLiangCheng): 给commit或HEAD加入branch name属性 呃呃
+     * Done[?](QingZhiLiangCheng): 给commit或HEAD加入branch name属性 呃呃
      */
     public void commit(String commitMsg) {
         List<String> addStageFiles = addStageManager.getFiles();
@@ -273,7 +273,7 @@ public class Repository {
      * following the first parent commit links, ignoring any second parents found in merge commits. "
      * 所以说对于普通提交：顺着父提交打印就行
      * 对于合并提交：需要显示该提交的信息，包括两个父提交的简短哈希值，但仅沿着第一个父提交继续向上回溯历史。
-     * TODO(QingZhiLiangCheng): 测试合并打印是否正确
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng): 测试合并打印是否正确
      */
     public void printLog() {
         Commit commit = getHeadCommit();
@@ -285,7 +285,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng)
      *  java gitlet.Main checkout -- [file name]
      *  java gitlet.Main checkout [commit id] -- [file name]
      *  java gitlet.Main checkout [branch name]
@@ -508,7 +508,7 @@ public class Repository {
 
 
     /**
-     * TODO(QingZhiLiangCheng):从指定的提交中检出（恢复）某个文件到工作目录 不修改暂存区
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng):从指定的提交中检出（恢复）某个文件到工作目录 不修改暂存区
      * 1. 判断commit是否存在？
      * 2. 判断fileName是否存在？ - "File does not exist in that commit."
      * 3. 获取old commit中该文件的blob中的内容
@@ -534,7 +534,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng) java gitlet.Main checkout [branch name]
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng) java gitlet.Main checkout [branch name]
      * 判断指定分支是否存在 - "No such branch exists."
      * 指定分支branchName与当前Head的branchName相同 - "No need to checkout the current branch."
      * 将指定分支头部提交的所有文件放入工作目录，并覆盖已存在的文件版本（如果存在）
@@ -562,7 +562,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 更新工作区中文件
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng): 更新工作区中文件
      * 这里选择了先清空CWD中的文件
      * 然后再根据迁出分支的commit添加文件
      */

@@ -50,7 +50,7 @@ public class BranchManager {
     }
 
     /**
-     * TODO(ChengShi): 是否存在该branch
+     * Done[Completed on 2025-5-21](ChengShi): 是否存在该branch
      */
     public boolean exist(String branchName) {
         File targetFilePath = join(HEADS_DIR, branchName);
@@ -58,7 +58,7 @@ public class BranchManager {
     }
 
     /**
-     * TODO(ChengShi): 根据branch name获取Branch
+     * Done[Completed on 2025-5-21](ChengShi): 根据branch name获取Branch
      */
     public Branch getBranchFromName(String branchName) {
         File branch = join(HEADS_DIR, branchName);
@@ -67,7 +67,7 @@ public class BranchManager {
 
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng)
      */
     public void deleteBranch(Branch branch) {
         File file = join(HEADS_DIR, branch.getBranchName());
@@ -75,7 +75,7 @@ public class BranchManager {
     }
 
     /**
-     * TODO(QingZhiLiangCheng)
+     * Done[Completed on 2025-5-21](QingZhiLiangCheng)
      */
     public List<String> getBranchList() {
         return plainFilenamesIn(HEADS_DIR);
