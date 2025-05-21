@@ -344,11 +344,9 @@ public class Repository {
     public void showStatus() {
         // === Branches ===
         System.out.println("=== Branches ===");
-        List<String> branches = plainFilenamesIn(branchManager.getHEADS_DIR());
+        List<String> branches = branchManager.getBranchList();
         String currentBranch = headManager.getHead().getBranchName();
         Collections.sort(branches);
-
-
         for (String branch : branches) {
             if (branch.equals(currentBranch)) {
                 System.out.println("*" + branch);
@@ -377,69 +375,41 @@ public class Repository {
         System.out.println();
     }
 
-
     /**
-     * Done[Completed on 2025-05-20](ChengShi):add new branch
+     * Done[Completed on 2025-05-21](ChengShi):add new branch
      * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
      * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
      * --直到java gitlet.Main checkout branchName 才会切换了分支
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
-        File newBranch = join(branchManager.getHEADS_DIR(), newBranchName);
-        if (newBranch.exists()) {
+        if (branchManager.exist(newBranchName)) {
             throw new GitletException(newBranchName + " already exists.");
         }
-        String currentCommitId = headManager.getHead().getBranchName();
-        writeContents(newBranch, currentCommitId);
+        Commit headCommit = getHeadCommit();
+        Branch newBranch = new Branch(newBranchName, headCommit.getId());
+        branchManager.saveBranch(newBranch);
     }
 
     /**
-     * TODO(ChengShi): remove branch
+     * Done[Completed on 2025-05-21](ChengShi): remove branch
      * 删除指定名称的分支。
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
     public void removeBranch(String branchName) {
-        File branchFile = join(branchManager.getHEADS_DIR(), branchName);
-        if (!branchFile.exists()) {
+
+        if (!branchManager.exist(branchName)) {
             throw new GitletException(branchName + " does not exist.");
         }
-
-        String currentBranch = headManager.getHead().getBranchName();
-        if (branchName.equals(currentBranch)) {
+        String currentBranchName = headManager.getHead().getBranchName();
+        Branch branch = branchManager.getBranchFromName(branchName);
+        if (branchName.equals(currentBranchName)) {
             throw new GitletException("Cannot remove the current branch.");
         }
 
-        branchFile.delete();
+        branchManager.deleteBranch(branch);
     }
 
-    /**
-     * TODO(ChengShi): find [commit message]
-     * 打印所有包含指定提交信息的提交 ID，每行一个。如果有多个这样的提交，则将 ID 打印在不同的行上。
-     */
-    public void findCommitsByMessage(String message) {
-        File commitsDir = join(OBJECTS_DIR, "commits");
-
-        if (!commitsDir.exists() || !commitsDir.isDirectory()) {
-            System.out.println("没有找到包含指定提交信息的提交 ID");
-            return;
-        }
-
-        List<String> commitIds = plainFilenamesIn(commitsDir);
-        boolean found = false;
-
-        for (String commitId : commitIds) {
-            Commit commit = commitManager.getCommit(commitId);
-            if (commit.getMessage().contains(message)) {
-                System.out.println(commitId);
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.println("没有找到包含指定提交信息的提交 ID");
-        }
-    }
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
@@ -613,18 +583,18 @@ public class Repository {
 
 
     /**
-     * TODO(ChengShi): 检查当前工作目录中是否有未被track的文件
+     * Done[Completed on 2025-05-21](ChengShi): 检查当前工作目录中是否有未被track的文件
      * 未被track是指该文件没有被提交到版本中
      */
     private boolean unTrackFileExists(Commit commit) {
         List<String> workingFiles = plainFilenamesIn(CWD); // CWD 是当前工作目录
         if (workingFiles != null) {
             for (String fileName : workingFiles) {
-                if (addStageManager.exist(fileName)) {
+                if (addStageManager.exist(commit.getId())) {
                     continue;
                 }
 
-                if (!commitManager.containsFile(fileName)) {
+                if (!commitManager.containsFile(commit.getId())) {
                     return true;
                 }
             }
@@ -641,6 +611,15 @@ public class Repository {
         Commit headCommit = getHeadCommit();
         checkoutFileFromCommitId(headCommit.getId(), fileName);
 
+    }
+
+    /**
+     * Done[Completed on 2025-05-21](ChengShi):按指定信息寻找commit
+     *
+     * @param message
+     */
+    public void findCommitsByMessage(String message) {
+        commitManager.findCommitsByMessage(message);
     }
 
 

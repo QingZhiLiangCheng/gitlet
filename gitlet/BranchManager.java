@@ -2,10 +2,10 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 import static gitlet.Repository.REFS_DIR;
-import static gitlet.Utils.join;
-import static gitlet.Utils.writeObject;
+import static gitlet.Utils.*;
 
 /**
  * TODO(QingZhiLiangCheng):Branch Manager, 管理Branch的相关操作
@@ -13,14 +13,14 @@ import static gitlet.Utils.writeObject;
  * @author QingZhiLiangCheng
  */
 public class BranchManager {
+
     private final File HEADS_DIR;
 
     BranchManager() {
         HEADS_DIR = join(REFS_DIR, "heads");
     }
-    public File getHEADS_DIR() {
-        return HEADS_DIR;
-    }
+
+
     /**
      * Done[Completed on 2025-05-20](QingZhiLiangCheng)
      */
@@ -53,14 +53,32 @@ public class BranchManager {
      * TODO(ChengShi): 是否存在该branch
      */
     public boolean exist(String branchName) {
-        return false;
+        File targetFilePath = join(HEADS_DIR, branchName);
+        return targetFilePath.exists();
     }
 
     /**
      * TODO(ChengShi): 根据branch name获取Branch
      */
     public Branch getBranchFromName(String branchName) {
-        return null;
+        File branch = join(HEADS_DIR, branchName);
+        return readObject(branch, Branch.class);
     }
 
+
+    /**
+     * TODO(QingZhiLiangCheng)
+     */
+    public void deleteBranch(Branch branch) {
+        File file = join(HEADS_DIR, branch.getBranchName());
+        file.delete();
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng)
+     */
+    public List<String> getBranchList() {
+        return plainFilenamesIn(HEADS_DIR);
+    }
 }
+
