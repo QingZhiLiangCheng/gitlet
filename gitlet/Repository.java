@@ -302,8 +302,12 @@ public class Repository {
             //java gitlet.Main checkout [branch name】
             String branchName = args[1];
             checkoutBranch(branchName);
+        } else if (args.length == 3) {
+            fileName = args[2];
+            checkoutFileFromHead(fileName);
         }
     }
+
 
     /**
      * TODO(ChengShi): status command
@@ -585,6 +589,17 @@ public class Repository {
      */
     private boolean unTrackFileExists(Commit commit) {
         return false;
+    }
+
+    /**
+     * Done[Completed on 2025-05-21](QingZhiLiangCheng):checkout -- [file name]
+     * 将文件在 head 提交中的版本放入工作目录中，并覆盖工作目录中已存在的版本（如果存在）
+     * 如果该文件在前一次提交中不存在，则中止，并打印错误消息File does not exist in that commit.
+     */
+    private void checkoutFileFromHead(String fileName) {
+        Commit headCommit = getHeadCommit();
+        checkoutFileFromCommitId(headCommit.getId(), fileName);
+
     }
 
 
