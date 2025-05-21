@@ -307,7 +307,7 @@ public class Repository {
 
     /**
      * TODO(ChengShi): status command
-     * TODO(ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
+     * Done[Completed on 2025-05-20](ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
      * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * Branches: 显示当前存在的分支 并用*标记当前分支
      * Staged Files: 显示已暂存待添加的文件
@@ -338,11 +338,12 @@ public class Repository {
      *
      */
     public void showStatus() {
-       /* // === Branches ===
+       // === Branches ===
         System.out.println("=== Branches ===");
-        List<String> branches = plainFilenamesIn(HEADS_DIR);
-        String currentBranch = getHead().getBranchName();
+        List<String> branches = plainFilenamesIn(branchManager.getHEADS_DIR());
+        String currentBranch = headManager.getHead().getBranchName();
         Collections.sort(branches);
+
 
         for (String branch : branches) {
             if (branch.equals(currentBranch)) {
@@ -364,29 +365,29 @@ public class Repository {
 
         // === Removed Files ===
         System.out.println("=== Removed Files ===");
-        List<String> removedFiles = new ArrayList<>(removeStage.getFiles());
+        List<String> removedFiles = new ArrayList<>(removeStageManager.getFiles());
         removedFiles.sort(String.CASE_INSENSITIVE_ORDER);
         for (String file : removedFiles) {
             System.out.println(file);
         }
-        System.out.println();*/
+        System.out.println();
     }
 
 
     /**
-     * TODO(ChengShi):add new branch
+     * Done[Completed on 2025-05-20](ChengShi):add new branch
      * 创建一个指定名称的新分支，并让它指向当前的HEAD提交
      * 这个命令不会立即切换到新创建的分支（就像真实的 Git 一样）
      * --直到java gitlet.Main checkout branchName 才会切换了分支
      * 用得到的函数应该是都写过了 如果没有的话再自己加新的
      */
     public void createBranch(String newBranchName) {
-       /* File newBranch = join(HEADS_DIR, newBranchName);
+        File newBranch = join(branchManager.getHEADS_DIR(), newBranchName);
         if (newBranch.exists()) {
             throw new GitletException(newBranchName + " already exists.");
         }
-        String currentCommitId = getHead().getBranchName();
-        writeContents(newBranch, currentCommitId);*/
+        String currentCommitId = headManager.getHead().getBranchName();
+        writeContents(newBranch, currentCommitId);
     }
 
     /**
@@ -395,17 +396,17 @@ public class Repository {
      * 这仅仅意味着删除与该分支相关联的指针；并不会删除在该分支下创建的所有提交等内容。
      */
     public void removeBranch(String branchName) {
-/*        File branchFile = join(HEADS_DIR, branchName);
+        File branchFile = join(branchManager.getHEADS_DIR(), branchName);
         if (!branchFile.exists()) {
             throw new GitletException(branchName + " does not exist.");
         }
 
-        String currentBranch = getHead().getBranchName();
+        String currentBranch = headManager.getHead().getBranchName();
         if (branchName.equals(currentBranch)) {
             throw new GitletException("Cannot remove the current branch.");
         }
 
-        branchFile.delete();*/
+        branchFile.delete();
     }
 
     /**

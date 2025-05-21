@@ -117,7 +117,6 @@ public class Commit implements Serializable {
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.id = sha1(message, timestamp.toString());
         this.parents = new LinkedList<>();
-        ;
         this.parents.add(oldCommit.getId());
         this.blobMap = blobMap;
 

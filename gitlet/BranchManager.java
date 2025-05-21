@@ -2,6 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import static gitlet.Utils.*;
 
 import static gitlet.Repository.REFS_DIR;
 import static gitlet.Utils.join;
@@ -18,7 +21,9 @@ public class BranchManager {
     BranchManager() {
         HEADS_DIR = join(REFS_DIR, "heads");
     }
-
+    public File getHEADS_DIR() {
+        return HEADS_DIR;
+    }
     /**
      * Done[Completed on 2025-05-20](QingZhiLiangCheng)
      */
