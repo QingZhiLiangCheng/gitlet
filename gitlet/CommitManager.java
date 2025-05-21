@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import static gitlet.Repository.OBJECTS_DIR;
 import static gitlet.Utils.*;
@@ -11,7 +13,7 @@ import static gitlet.Utils.*;
  *
  * @author QingZhiLiangCheng
  */
-public class CommitManager {
+public class CommitManager implements Serializable{
     private final File COMMITS_DIR;
 
     CommitManager() {
@@ -51,4 +53,13 @@ public class CommitManager {
         File commitFile = new File(COMMITS_DIR, commit.getId());
         writeObject(commitFile, commit);
     }
+
+    /**
+     * Done(chenghsi)[Completed on 2025-05-21] :检测commit里面是否含有指定ID的文件
+     */
+    public boolean containsFile(String fileName) {
+        File targetFilePath = join(COMMITS_DIR, fileName);
+        return targetFilePath.exists();
+    }
 }
+

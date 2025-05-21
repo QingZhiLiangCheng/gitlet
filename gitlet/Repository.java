@@ -418,7 +418,27 @@ public class Repository {
      * 打印所有包含指定提交信息的提交 ID，每行一个。如果有多个这样的提交，则将 ID 打印在不同的行上。
      */
     public void findCommitsByMessage(String message) {
+        File commitsDir = join(OBJECTS_DIR, "commits");
 
+        if (!commitsDir.exists() || !commitsDir.isDirectory()) {
+            System.out.println("没有找到包含指定提交信息的提交 ID");
+            return;
+        }
+
+        List<String> commitIds = plainFilenamesIn(commitsDir);
+        boolean found = false;
+
+        for (String commitId : commitIds) {
+            Commit commit = commitManager.getCommit(commitId);
+            if (commit.getMessage().contains(message)) {
+                System.out.println(commitId);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("没有找到包含指定提交信息的提交 ID");
+        }
     }
 
     /**
@@ -597,6 +617,18 @@ public class Repository {
      * 未被track是指该文件没有被提交到版本中
      */
     private boolean unTrackFileExists(Commit commit) {
+        List<String> workingFiles = plainFilenamesIn(CWD); // CWD 是当前工作目录
+        if (workingFiles != null) {
+            for (String fileName : workingFiles) {
+                if (addStageManager.exist(fileName)) {
+                    continue;
+                }
+
+                if (!commitManager.containsFile(fileName)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
