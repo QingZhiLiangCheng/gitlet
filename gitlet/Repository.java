@@ -413,6 +413,14 @@ public class Repository {
     }
 
     /**
+     * TODO(ChengShi): find [commit message]
+     * 打印所有包含指定提交信息的提交 ID，每行一个。如果有多个这样的提交，则将 ID 打印在不同的行上。
+     */
+    public void findCommitsByMessage(String message) {
+
+    }
+
+    /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
      */
     private void printCommitLog(Commit commit) {
@@ -601,6 +609,7 @@ public class Repository {
         checkoutFileFromCommitId(headCommit.getId(), fileName);
 
     }
+
 
 
 }
