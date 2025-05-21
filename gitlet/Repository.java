@@ -56,7 +56,7 @@ public class Repository {
      * the objects directory<br>
      * 包含commits 和 blogs
      */
-    public static File OBJECTS_DIR =join(GITLET_DIR, "objects");
+    public static File OBJECTS_DIR = join(GITLET_DIR, "objects");
 
 
     /**
@@ -302,8 +302,12 @@ public class Repository {
             //java gitlet.Main checkout [branch name】
             String branchName = args[1];
             checkoutBranch(branchName);
+        } else if (args.length == 3) {
+            fileName = args[2];
+            checkoutFileFromHead(fileName);
         }
     }
+
 
     /**
      * TODO(ChengShi): status command
@@ -407,6 +411,14 @@ public class Repository {
         }
 
         branchFile.delete();
+    }
+
+    /**
+     * TODO(ChengShi): find [commit message]
+     * 打印所有包含指定提交信息的提交 ID，每行一个。如果有多个这样的提交，则将 ID 打印在不同的行上。
+     */
+    public void findCommitsByMessage(String message) {
+
     }
 
     /**
@@ -542,16 +554,16 @@ public class Repository {
      */
     private void checkoutBranch(String branchName) {
         if (!branchManager.contains(branchName)) {
-            throw new GitletException("");
+            throw new GitletException("No such branch exists.");
         }
         String headBranchName = headManager.getHead().getBranchName();
         if (branchName.equals(headBranchName)) {
-            throw new GitletException("");
+            throw new GitletException("No need to checkout the current branch.");
         }
         Branch givenBranch = branchManager.getBranchFromName(branchName);
         Commit headOfGivenBranchCommit = commitManager.getCommit(givenBranch.getNext());
         if (unTrackFileExists(headOfGivenBranchCommit)) {
-            throw new GitletException("");
+            throw new GitletException("There is an untracked file in the way; delete it, or add and commit it first.");
         }
         updateCWD(headOfGivenBranchCommit);
         Head newHeadPointer = new Head(branchName, headOfGivenBranchCommit.getId());
@@ -565,6 +577,18 @@ public class Repository {
      * 然后再根据迁出分支的commit添加文件
      */
     private void updateCWD(Commit headOfGivenBranchCommit) {
+        List<String> workFileNames = plainFilenamesIn(CWD);
+        for (String workFile : workFileNames) {
+            restrictedDelete(join(CWD, workFile));
+        }
+        HashMap<String, String> headOfGivenBranchCommitHashMap = headOfGivenBranchCommit.getBlobMap();
+        Set<String> trackedFiles = headOfGivenBranchCommitHashMap.keySet();
+        for (String trackedFile : trackedFiles) {
+            File workFile = join(CWD, trackedFile);
+            String boshId = headOfGivenBranchCommitHashMap.get(trackedFile);
+            String content = Blob.getContentFromId(boshId);
+            writeObject(workFile, content);
+        }
     }
 
 
@@ -575,6 +599,18 @@ public class Repository {
     private boolean unTrackFileExists(Commit commit) {
         return false;
     }
+
+    /**
+     * Done[Completed on 2025-05-21](QingZhiLiangCheng):checkout -- [file name]
+     * 将文件在 head 提交中的版本放入工作目录中，并覆盖工作目录中已存在的版本（如果存在）
+     * 如果该文件在前一次提交中不存在，则中止，并打印错误消息File does not exist in that commit.
+     */
+    private void checkoutFileFromHead(String fileName) {
+        Commit headCommit = getHeadCommit();
+        checkoutFileFromCommitId(headCommit.getId(), fileName);
+
+    }
+
 
 
 }

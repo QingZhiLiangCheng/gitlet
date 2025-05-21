@@ -54,7 +54,8 @@ public class Main {
                 repository.printLog();
                 break;
             case "find":
-                // TODO(QingZhiLiangCheng): 处理 `find [commit message]` 命令
+                // TODO(ChengShi): 处理 `find [commit message]` 命令
+                repository.findCommitsByMessage(args[1]);
                 break;
             case "status":
                 // TODO(ChengShi: status): 处理 `status` 命令
