@@ -2,9 +2,6 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import static gitlet.Utils.*;
 
 import static gitlet.Repository.REFS_DIR;
 import static gitlet.Utils.join;
@@ -53,14 +50,14 @@ public class BranchManager {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 是否存在该branch
+     * TODO(ChengShi): 是否存在该branch
      */
-    public boolean contains(String branchName) {
+    public boolean exist(String branchName) {
         return false;
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 根据branch name获取Branch
+     * TODO(ChengShi): 根据branch name获取Branch
      */
     public Branch getBranchFromName(String branchName) {
         return null;

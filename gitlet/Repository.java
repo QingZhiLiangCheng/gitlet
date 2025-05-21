@@ -342,7 +342,7 @@ public class Repository {
      *
      */
     public void showStatus() {
-       // === Branches ===
+        // === Branches ===
         System.out.println("=== Branches ===");
         List<String> branches = plainFilenamesIn(branchManager.getHEADS_DIR());
         String currentBranch = headManager.getHead().getBranchName();
@@ -573,7 +573,7 @@ public class Repository {
      * 指定分支视为当前分支 (HEAD)
      */
     private void checkoutBranch(String branchName) {
-        if (!branchManager.contains(branchName)) {
+        if (!branchManager.exist(branchName)) {
             throw new GitletException("No such branch exists.");
         }
         String headBranchName = headManager.getHead().getBranchName();
@@ -642,7 +642,6 @@ public class Repository {
         checkoutFileFromCommitId(headCommit.getId(), fileName);
 
     }
-
 
 
 }
