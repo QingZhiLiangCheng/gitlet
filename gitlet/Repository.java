@@ -286,9 +286,9 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-5-21](QingZhiLiangCheng)
-     *  java gitlet.Main checkout -- [file name]
-     *  java gitlet.Main checkout [commit id] -- [file name]
-     *  java gitlet.Main checkout [branch name]
+     * java gitlet.Main checkout -- [file name]
+     * java gitlet.Main checkout [commit id] -- [file name]
+     * java gitlet.Main checkout [branch name]
      */
     public void checkout(String[] args) {
         String fileName;
@@ -576,7 +576,7 @@ public class Repository {
             File workFile = join(CWD, trackedFile);
             String boshId = headOfGivenBranchCommitHashMap.get(trackedFile);
             String content = Blob.getContentFromId(boshId);
-            writeObject(workFile, content);
+            writeContents(workFile, content);
         }
     }
 
