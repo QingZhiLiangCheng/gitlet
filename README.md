@@ -220,7 +220,7 @@ public class Repository {
 
 
   /**
-   * TODO(QingZhiLiangCheng): 重构
+   * Done(QingZhiLiangCheng): 重构
    * 增加add manager, remove manager, blob manager, commit manager, head manager,branch manager来管理对于仓库的操作
    * commit, head, branch, blob 等类仅仅作为实体
    */
