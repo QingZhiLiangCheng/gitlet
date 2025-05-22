@@ -6,6 +6,10 @@
 
 **Since**: 2025-05-10
 
+**Github**: https://github.com/QingZhiLiangCheng/gitlet
+
+**Bilibili**: TODO
+
 ---
 
 ## Overview
