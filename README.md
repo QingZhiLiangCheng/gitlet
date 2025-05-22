@@ -70,6 +70,13 @@ java gitlet.Main checkout [commit id] -- [file name]
 java gitlet.Main branch [branch name]
 
 java gitlet.Main rm-branch [branch name]
+
+java gitlet.Main checkout [branch name]
+
+java gitlet.Main checkout -- [file name]
+
+java gitlet.Main checkout [commit id] -- [file name]
+
 ```
 
 ## Gitlet Design Document
@@ -457,6 +464,35 @@ file.txt
 ```
 
 ### checkout
+#### java gitlet.Main checkout [commit id] -- [file name]
+`java gitlet.Main checkout [commit id] -- [file name]`
+
+从指定的提交中检出（恢复）某个文件到工作目录 不修改暂存区
+
+- 判断commit是否存在？ 
+- 判断fileName是否存在？ - "File does not exist in that commit."
+- 获取old commit中该文件的blob中的内容 
+- 修改文件
+
+#### java gitlet.Main checkout [branch name]
+`java gitlet.Main checkout [branch name]`
+
+- 判断指定分支是否存在 - "No such branch exists."
+- 指定分支branchName与当前Head的branchName相同 - "No need to checkout the current branch."
+- 将指定分支头部提交的所有文件放入工作目录，并覆盖已存在的文件版本（如果存在） 
+- 所有在当前分支中跟踪但在签出分支中不存在的文件都将被删除 
+- 如果签出分支中的文件与当前工作目录中未被追踪（untracked）的文件发生冲突 - “There is an untracked file in the way; 
+- 指定分支视为当前分支 (HEAD)
+
+
+#### java gitlet.Main checkout -- [file name]
+`java gitlet.Main checkout -- [file name]`
+
+- 将文件在 head 提交中的版本放入工作目录中，并覆盖工作目录中已存在的版本（如果存在）
+- 如果该文件在前一次提交中不存在，则中止，并打印错误消息File does not exist in that commit.
+
+
+
 
 
 

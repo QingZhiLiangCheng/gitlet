@@ -289,7 +289,6 @@ public class Repository {
      *  java gitlet.Main checkout -- [file name]
      *  java gitlet.Main checkout [commit id] -- [file name]
      *  java gitlet.Main checkout [branch name]
-     * 123
      */
     public void checkout(String[] args) {
         String fileName;
