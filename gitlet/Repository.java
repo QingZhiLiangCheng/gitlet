@@ -738,14 +738,23 @@ public class Repository {
      */
     private boolean unTrackFileExists(Commit objectCommit) {
         List<String> workingFiles = workingFilesList();
-        Set<String> trackFile = objectCommit.getBlobMap().keySet();
+        HashMap<String, String> objectCommitBlobMap = objectCommit.getBlobMap();
+        Set<String> trackFile = objectCommitBlobMap.keySet();
+        List<String> untrackFileList = unTrackFilesList();
+        for (String fileName : trackFile) {
+            if (trackFile.contains(fileName)) {
+                String blobId = objectCommitBlobMap.get(fileName);
+                String objectContent = Blob.getContentFromId(blobId);
 
-        for (String workFile : workingFiles) {
-            if (!trackFile.contains(workFile)) {
-                return true;
+                String currentContent = readContentsAsString(join(CWD, fileName));
+
+                if (!objectContent.equals(currentContent)) {
+                    return true;
+                }
             }
         }
         return false;
+
     }
 
     /**
