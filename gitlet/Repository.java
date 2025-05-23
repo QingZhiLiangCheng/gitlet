@@ -309,7 +309,8 @@ public class Repository {
 
 
     /**
-     * TODO(ChengShi): status command
+     * TODO(ChengShi, QingZhiLiangCheng): status command
+     * <p>
      * Done[Completed on 2025-05-20](ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
      * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
      * Branches: 显示当前存在的分支 并用*标记当前分支
@@ -318,6 +319,15 @@ public class Repository {
      * 各部分之间有一个空行，整个状态也以空行结尾。
      * 条目应按字典顺序列出，使用 Java 字符串比较顺序（星号不计算）
      * 有需要的方法如果没写过的话等自己加在合适的位置就行
+     * <p>
+     * TODO(QingZhiLiangCheng) 后两部分(Modifications Not Staged For Commit, Untracked Files)
+     * === Modifications Not Staged For Commit ===
+     * (modified)
+     * 1. 文件在当前提交中被追踪，在工作目录中被修改，但未暂存
+     * 2. 文件已暂存为添加状态，但在工作目录中的内容发生了变化（即暂存的内容与当前不一致）
+     * (deleted)
+     * 3. 文件已暂存为添加状态，但在工作目录中已被删除
+     * 4. 文件未被暂存为删除状态，但在当前提交中被追踪，且在工作目录中被删除。
      */
     /*
      * 官方example
@@ -372,6 +382,146 @@ public class Repository {
             System.out.println(file);
         }
         System.out.println();
+
+        //=== Modifications Not Staged For Commit ===
+
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        List<String> trackedInCommitButModifiedList = TrackedInCommitButModified();
+        for (String file : trackedInCommitButModifiedList) {
+            System.out.println(file + "(modified)");
+        }
+        List<String> stagedForAdditionButModifiedList = stagedForAdditionButModified();
+        for (String file : stagedForAdditionButModifiedList) {
+            System.out.println(file + "(modified)");
+        }
+
+        List<String> stagedForAdditionButDeleteList = stagedForAdditionButDelete();
+        for (String file : stagedForAdditionButDeleteList) {
+            System.out.println(file + "(deleted)");
+        }
+        List<String> NotStagedForRemoveButDeletedList = NotStagedForRemoveButDeleted();
+        for (String file : NotStagedForRemoveButDeletedList) {
+            System.out.println(file + "(deleted)");
+        }
+
+        //=== Untracked Files ===
+        System.out.println("=== Untracked Files ===");
+        List<String> untrackedFiles = unTrackFilesList();
+        for (String file : untrackedFiles) {
+            System.out.println(file);
+        }
+
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 文件未被暂存为删除状态，但在当前提交中被追踪，且在工作目录中被删除
+     */
+    private List<String> NotStagedForRemoveButDeleted() {
+
+        List<String> removeFiles = removeStageManager.getFiles();
+        List<String> workingFiles = workingFilesList();
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
+        Set<String> commitFiles = headCommitBlobMap.keySet();
+        List<String> res = new LinkedList<>();
+
+        for (String fileName : commitFiles) {
+            if (!removeFiles.contains(fileName) && !workingFiles.contains(fileName)) {
+                res.add(fileName);
+            }
+        }
+
+        return res;
+
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 文件已暂存为添加状态，但在工作目录中已被删除
+     */
+    private List<String> stagedForAdditionButDelete() {
+        List<String> addStagedFiles = addStageManager.getFiles();
+        List<String> workingFiles = workingFilesList();
+        List<String> res = new LinkedList<>();
+
+        for (String fileName : addStagedFiles) {
+            if (!workingFiles.contains(fileName)) {
+                res.add(fileName);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng):文件已暂存为添加状态，但在工作目录中的内容发生了变化（即暂存的内容与当前不一致）n
+     */
+    private List<String> stagedForAdditionButModified() {
+        List<String> addStagedFiles = addStageManager.getFiles();
+        List<String> workingFiles = workingFilesList();
+        List<String> res = new LinkedList<>();
+
+        for (String fileName : addStagedFiles) {
+            if (workingFiles != null && workingFiles.contains(fileName)) {
+                String blobId = addStageManager.getFilePointerToBlob(fileName).next;
+                String blobContent = Blob.getContentFromId(blobId);
+                String currentContent = readContentsAsString(join(CWD, fileName));
+
+                if (blobContent.equals(currentContent)) {
+                    res.add(fileName);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Done[Completed on 2025-05-23] (QingZhiLiangCheng): 获取工作目录中文件
+     */
+    private List<String> workingFilesList() {
+        return plainFilenamesIn(CWD);
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 文件在当前提交中被追踪，在工作目录中被修改，但未暂存
+     */
+    private List<String> TrackedInCommitButModified() {
+        Commit headCommit = getHeadCommit();
+        List<String> trackedInCommitButModifedList = new LinkedList<>();
+        HashMap<String, String> headCommitBlobMap = headCommit.getBlobMap();
+        Set<String> trackedFileNames = headCommitBlobMap.keySet();
+        List<String> workingFiles = workingFilesList();
+
+        for (String fileName : trackedFileNames) {
+            if (workingFiles != null && workingFiles.contains(fileName)) {
+                String blobId = headCommitBlobMap.get(fileName);
+                String blobContent = Blob.getContentFromId(blobId);
+                String currentContent = readContentsAsString(join(CWD, fileName));
+
+                if (blobContent.equals(currentContent)) {
+                    trackedInCommitButModifedList.add(fileName);
+                }
+            }
+        }
+        return trackedInCommitButModifedList;
+    }
+
+    /**
+     * TODO(QingZhiLiangCheng): 未被跟踪文件列表
+     * 存在于工作目录中，但既未被暂存为添加状态，也未被追踪的文件。
+     * 包括那些曾被暂存为删除，但又被重新创建而 Gitlet 并不知情的文件。忽略任何新引入的子目录，因为 Gitlet 不处理它们
+     */
+    private List<String> unTrackFilesList() {
+        List<String> workingFiles = workingFilesList();
+        List<String> res = new LinkedList<>();
+        Commit headCommit = getHeadCommit();
+        HashMap<String, String> blobMap = headCommit.getBlobMap();
+        if (workingFiles != null) {
+            for (String fileName : workingFiles) {
+                if (!addStageManager.exist(fileName) && !blobMap.containsKey(fileName)) {
+                    res.add(fileName);
+                }
+            }
+        }
+        return res;
     }
 
     /**
@@ -566,7 +716,7 @@ public class Repository {
      * 然后再根据迁出分支的commit添加文件
      */
     private void updateCWD(Commit headOfGivenBranchCommit) {
-        List<String> workFileNames = plainFilenamesIn(CWD);
+        List<String> workFileNames = workingFilesList();
         for (String workFile : workFileNames) {
             restrictedDelete(join(CWD, workFile));
         }
@@ -583,19 +733,16 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-05-21](ChengShi): 检查当前工作目录中是否有未被track的文件
-     * 未被track是指该文件没有被提交到版本中
+     * Refactor[Completed on 2025-05-23](QingZhiLiangCheng): 她写错了哈哈哈
+     * 只有当切换分支会导致未跟踪文件被覆盖时，系统才会发出此警告以防止数据丢失或冲突
      */
-    private boolean unTrackFileExists(Commit commit) {
-        List<String> workingFiles = plainFilenamesIn(CWD); // CWD 是当前工作目录
-        if (workingFiles != null) {
-            for (String fileName : workingFiles) {
-                if (addStageManager.exist(commit.getId())) {
-                    continue;
-                }
+    private boolean unTrackFileExists(Commit objectCommit) {
+        List<String> workingFiles = workingFilesList();
+        Set<String> trackFile = objectCommit.getBlobMap().keySet();
 
-                if (!commitManager.containsFile(commit.getId())) {
-                    return true;
-                }
+        for (String workFile : workingFiles) {
+            if (!trackFile.contains(workFile)) {
+                return true;
             }
         }
         return false;
