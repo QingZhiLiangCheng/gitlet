@@ -320,7 +320,7 @@ public class Repository {
      * 条目应按字典顺序列出，使用 Java 字符串比较顺序（星号不计算）
      * 有需要的方法如果没写过的话等自己加在合适的位置就行
      * <p>
-     * TODO(QingZhiLiangCheng) 后两部分(Modifications Not Staged For Commit, Untracked Files)
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng) 后两部分(Modifications Not Staged For Commit, Untracked Files)
      * === Modifications Not Staged For Commit ===
      * (modified)
      * 1. 文件在当前提交中被追踪，在工作目录中被修改，但未暂存
@@ -414,7 +414,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 文件未被暂存为删除状态，但在当前提交中被追踪，且在工作目录中被删除
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng): 文件未被暂存为删除状态，但在当前提交中被追踪，且在工作目录中被删除
      */
     private List<String> NotStagedForRemoveButDeleted() {
 
@@ -436,7 +436,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 文件已暂存为添加状态，但在工作目录中已被删除
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng): 文件已暂存为添加状态，但在工作目录中已被删除
      */
     private List<String> stagedForAdditionButDelete() {
         List<String> addStagedFiles = addStageManager.getFiles();
@@ -452,7 +452,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng):文件已暂存为添加状态，但在工作目录中的内容发生了变化（即暂存的内容与当前不一致）n
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng):文件已暂存为添加状态，但在工作目录中的内容发生了变化（即暂存的内容与当前不一致）n
      */
     private List<String> stagedForAdditionButModified() {
         List<String> addStagedFiles = addStageManager.getFiles();
@@ -481,7 +481,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 文件在当前提交中被追踪，在工作目录中被修改，但未暂存
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng): 文件在当前提交中被追踪，在工作目录中被修改，但未暂存
      */
     private List<String> TrackedInCommitButModified() {
         Commit headCommit = getHeadCommit();
@@ -505,7 +505,7 @@ public class Repository {
     }
 
     /**
-     * TODO(QingZhiLiangCheng): 未被跟踪文件列表
+     * Done[Completed on 2025-05-23](QingZhiLiangCheng): 未被跟踪文件列表
      * 存在于工作目录中，但既未被暂存为添加状态，也未被追踪的文件。
      * 包括那些曾被暂存为删除，但又被重新创建而 Gitlet 并不知情的文件。忽略任何新引入的子目录，因为 Gitlet 不处理它们
      */
