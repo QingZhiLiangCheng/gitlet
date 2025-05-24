@@ -404,12 +404,15 @@ public class Repository {
             System.out.println(file + "(deleted)");
         }
 
+        System.out.println();
+
         //=== Untracked Files ===
         System.out.println("=== Untracked Files ===");
         List<String> untrackedFiles = unTrackFilesList();
         for (String file : untrackedFiles) {
             System.out.println(file);
         }
+        System.out.println();
 
     }
 
@@ -465,7 +468,7 @@ public class Repository {
                 String blobContent = Blob.getContentFromId(blobId);
                 String currentContent = readContentsAsString(join(CWD, fileName));
 
-                if (blobContent.equals(currentContent)) {
+                if (!blobContent.equals(currentContent)) {
                     res.add(fileName);
                 }
             }
@@ -496,7 +499,7 @@ public class Repository {
                 String blobContent = Blob.getContentFromId(blobId);
                 String currentContent = readContentsAsString(join(CWD, fileName));
 
-                if (blobContent.equals(currentContent)) {
+                if (!blobContent.equals(currentContent)) {
                     trackedInCommitButModifedList.add(fileName);
                 }
             }
@@ -701,10 +704,19 @@ public class Repository {
         }
         Branch givenBranch = branchManager.getBranchFromName(branchName);
         Commit headOfGivenBranchCommit = commitManager.getCommit(givenBranch.getNext());
-        if (unTrackFileExists(headOfGivenBranchCommit)) {
-            throw new GitletException("There is an untracked file in the way; delete it, or add and commit it first.");
+        List<String> unTrackFileExceptionList = unTrackFileExceptionExists(headOfGivenBranchCommit);
+        if (!unTrackFileExceptionList.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("There is untracked file in the way; delete it, or add and commit it first.\n");
+            sb.append("=== file list ===\n");
+            for (String file : unTrackFileExceptionList) {
+                sb.append(file);
+                sb.append("\n");
+            }
+            throw new GitletException(sb.toString());
         }
-        updateCWD(headOfGivenBranchCommit);
+        Commit nowBranchCommit = getHeadCommit();
+        updateCWD(headOfGivenBranchCommit, nowBranchCommit);
         Head newHeadPointer = new Head(branchName, headOfGivenBranchCommit.getId());
         headManager.saveHead(newHeadPointer);
 
@@ -712,14 +724,17 @@ public class Repository {
 
     /**
      * Done[Completed on 2025-5-21](QingZhiLiangCheng): 更新工作区中文件
+     * Update[Completed on 2025-5-24]
      * 这里选择了先清空CWD中的文件
      * 然后再根据迁出分支的commit添加文件
      */
-    private void updateCWD(Commit headOfGivenBranchCommit) {
-        List<String> workFileNames = workingFilesList();
-        for (String workFile : workFileNames) {
-            restrictedDelete(join(CWD, workFile));
+    private void updateCWD(Commit headOfGivenBranchCommit, Commit nowCommit) {
+        HashMap<String, String> nowCommitHashMap = nowCommit.getBlobMap();
+        Set<String> nowFiles = nowCommitHashMap.keySet();
+        for (String file : nowFiles) {
+            restrictedDelete(join(CWD, file));
         }
+
         HashMap<String, String> headOfGivenBranchCommitHashMap = headOfGivenBranchCommit.getBlobMap();
         Set<String> trackedFiles = headOfGivenBranchCommitHashMap.keySet();
         for (String trackedFile : trackedFiles) {
@@ -736,24 +751,17 @@ public class Repository {
      * Refactor[Completed on 2025-05-23](QingZhiLiangCheng): 她写错了哈哈哈
      * 只有当切换分支会导致未跟踪文件被覆盖时，系统才会发出此警告以防止数据丢失或冲突
      */
-    private boolean unTrackFileExists(Commit objectCommit) {
-        List<String> workingFiles = workingFilesList();
+    private List<String> unTrackFileExceptionExists(Commit objectCommit) {
         HashMap<String, String> objectCommitBlobMap = objectCommit.getBlobMap();
-        Set<String> trackFile = objectCommitBlobMap.keySet();
+        Set<String> objectTrackFiles = objectCommitBlobMap.keySet();
         List<String> untrackFileList = unTrackFilesList();
-        for (String fileName : trackFile) {
-            if (trackFile.contains(fileName)) {
-                String blobId = objectCommitBlobMap.get(fileName);
-                String objectContent = Blob.getContentFromId(blobId);
-
-                String currentContent = readContentsAsString(join(CWD, fileName));
-
-                if (!objectContent.equals(currentContent)) {
-                    return true;
-                }
+        List<String> res = new LinkedList<>();
+        for (String fileName : objectTrackFiles) {
+            if (untrackFileList.contains(fileName)) {
+                res.add(fileName);
             }
         }
-        return false;
+        return res;
 
     }
 
