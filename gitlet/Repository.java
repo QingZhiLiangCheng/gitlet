@@ -571,7 +571,7 @@ public class Repository {
 
 
     /**
-     * TODO(QingZhiLiangCheng): 合并分支
+     * Done[Completed on 2025-05-25](QingZhiLiangCheng): 合并分支
      */
     public void merge(String branchName) {
         Commit currentCommit = getHeadCommit();
@@ -598,15 +598,13 @@ public class Repository {
                     if (givenFileNames.contains(file)) {
                         //分割点存在; 当前分支存在 未被修改; 给定分支中存在
                         String givenBlobId = givenBlobMap.get(file);
-                        //1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
-                        //Done[Completed on 2025-05-25](QingZhiLiangCheng)
+                        //任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
                         checkoutFileFromCommitId(givenCommit.getId(), file);
-                        addStageManager.save(file, new BlobPointer(givenBlobId));
+                        add(file);
 
                     } else {
                         //分割点存在; 当前分支存在 未被修改; 给定分支中不存在
-                        //2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
-                        //Done[Completed on 2025-05-25](QingZhiLiangCheng)
+                        //任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
                         rm(file);
                     }
                 } else {
@@ -616,8 +614,7 @@ public class Repository {
                         String givenBlobId = givenBlobMap.get(file);
                         if (splitBlobId.equals(givenBlobId)) {
                             //分割点存在; 当前分支中存在 但被修改; 在给定分支中存在 未修改
-                            //TODO(QingZhiLiangCheng)
-                            //3. 自分割点以来，在当前分支中已修改但在给定分支中未修改的任何文件都应保持原样。
+                            //自分割点以来，在当前分支中已修改但在给定分支中未修改的任何文件都应保持原样。
                             continue;
                         } else {
                             //分割点存在; 当前分支中存在 但被修改; 在给定分支中存在 但被修改
@@ -627,19 +624,53 @@ public class Repository {
                             } else {
                                 //修改内容不一致
                                 //任何在当前分支和指定分支中以不同方式修改的文件都属于冲突文件。
-                                //TODO(QingZhiLiangCheng)
-                                processConflict(currentCommit, givenCommit, splitCommit);
+                                processConflict(currentCommit, givenCommit, file);
                             }
                         }
                     }
                 }
             } else {
-                //在当前分支不存在
-                //
+                //分割点存在; 在当前分支不存在
+                if (givenFileNames.contains(file)) {
+                    //分割点存在; 在当前分支不存在; 在给定分支存在
+                    String givenBlobId = givenBlobMap.get(file);
+                    //任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
+                    checkoutFileFromCommitId(givenCommit.getId(), file);
+                    add(file);
+                } else {
+                    //分割点存在; 在当前分支不存在; 在给定分支不存在
+                    continue;
+                }
             }
+        }
 
+        for (String file : currentFileNames) {
+            //分割点不存在；当前分支存在
+            String currentBlobId = currentBlobMap.get(file);
+            if (givenBlobMap.containsKey(file)) {
+                //分割点不存在；当前分支存在；给定分支存在
+                String givenBlobId = givenBlobMap.get(file);
+                if (givenBlobId.equals(currentBlobId)) {
+                    //内容相同
+                    continue;
+                } else {
+                    //内容不同 -- 冲突
+                    processConflict(currentCommit, givenCommit, file);
+                }
+            } else {
+                //分割点不存在；当前分支存在；给定分支不存在
+                rm(file);
+            }
+        }
+
+        for (String file : givenFileNames) {
+            //分割点不存在；给定分支存在；
+            //分割点不存在；给定分支存在；当前分支不存在
+            String givenBlobId = givenBlobMap.get(file);
+            add(file);
 
         }
+
 
         //Done[Completed on 2025-05-25](QingZhiLiangCheng) 提交commit
         String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
@@ -647,7 +678,41 @@ public class Repository {
         commit(commitMsg);
     }
 
-    private void processConflict(Commit currentCommit, Commit givenCommit, Commit splitCommit) {
+    /**
+     * TODO(QingZhiLiangCheng): 处理冲突
+     */
+    private void processConflict(Commit currentCommit, Commit givenCommit, String fileName) {
+        String givenBlobId = "";
+        String givenBlobContent = "";
+
+        String currentBlobId = "";
+        String currentBlobContent = "";
+
+        HashMap<String, String> givenBlobMap = givenCommit.getBlobMap();
+        HashMap<String, String> currentBlobMap = currentCommit.getBlobMap();
+
+        message("Encountered a merge conflict.");
+
+        if (givenBlobMap.containsKey(fileName)) {
+            givenBlobId = givenBlobMap.get(fileName);
+            givenBlobContent = Blob.getContentFromId(givenBlobId);
+        }
+
+        if (currentBlobContent.contains(fileName)) {
+            currentBlobId = currentBlobMap.get(fileName);
+            currentBlobContent = Blob.getContentFromId(currentBlobId);
+        }
+
+        StringBuilder resContent = new StringBuilder();
+        resContent.append("<<<<<<<  HEAD\n");
+        resContent.append(currentBlobContent);
+        resContent.append("=======\n");
+        resContent.append(givenBlobContent);
+        resContent.append(">>>>>>>\n");
+
+        writeContents(join(CWD, fileName), resContent.toString());
+        add(fileName);
+
     }
 
 
