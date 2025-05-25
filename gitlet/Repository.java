@@ -572,12 +572,6 @@ public class Repository {
 
     /**
      * TODO(QingZhiLiangCheng): 合并分支
-     * 找分割点
-     * 1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本，然后，这些文件都将自动暂存
-     * 2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
-     *
-     * 一旦文件按照上述步骤更新，并且拆分点不是当前分支或指定分支，合并操作就会自动提交，并记录日志信息
-     * Merged [given branch name] into [current branch name].
      */
     public void merge(String branchName) {
         Commit currentCommit = getHeadCommit();
@@ -594,29 +588,54 @@ public class Repository {
         Set<String> splitFileNames = splitBlobMap.keySet();
 
         for (String file : splitFileNames) {
-            //存在于分割点
+            //分割点存在
+            String splitBlobId = splitBlobMap.get(file);
             if (currentFileNames.contains(file)) {
-                //在当前分支中存在
-
-                if (givenFileNames.contains(file)) {
-                    //在给定分支中存在
-                    String givenBlobId = givenBlobMap.get(file);
-                    String splitBlobId = splitBlobMap.get(file);
-                    String currentBlobId = currentBlobMap.get(file);
-
-                    //1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
-                    //Done[Completed on 2025-05-25](QingZhiLiangCheng)
-                    if (splitBlobId.equals(currentBlobId) && !splitBlobId.equals(givenBlobId)) {
+                //分割点存在; 当前分支存在
+                String currentBlobId = currentBlobMap.get(file);
+                if (currentBlobId.equals(splitBlobId)) {
+                    //分割点存在; 当前分支存在 未被修改
+                    if (givenFileNames.contains(file)) {
+                        //分割点存在; 当前分支存在 未被修改; 给定分支中存在
+                        String givenBlobId = givenBlobMap.get(file);
+                        //1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
+                        //Done[Completed on 2025-05-25](QingZhiLiangCheng)
                         checkoutFileFromCommitId(givenCommit.getId(), file);
                         addStageManager.save(file, new BlobPointer(givenBlobId));
+
+                    } else {
+                        //分割点存在; 当前分支存在 未被修改; 给定分支中不存在
+                        //2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
+                        //Done[Completed on 2025-05-25](QingZhiLiangCheng)
+                        rm(file);
                     }
-
-                }else {
-                    //2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
-                    //Done[Completed on 2025-05-25](QingZhiLiangCheng)
-                    rm(file);
+                } else {
+                    //分割点存在; 当前分支中存在 但被修改
+                    if (givenFileNames.contains(file)) {
+                        //分割点存在; 当前分支中存在 但被修改; 在给定分支中存在
+                        String givenBlobId = givenBlobMap.get(file);
+                        if (splitBlobId.equals(givenBlobId)) {
+                            //分割点存在; 当前分支中存在 但被修改; 在给定分支中存在 未修改
+                            //TODO(QingZhiLiangCheng)
+                            //3. 自分割点以来，在当前分支中已修改但在给定分支中未修改的任何文件都应保持原样。
+                            continue;
+                        } else {
+                            //分割点存在; 当前分支中存在 但被修改; 在给定分支中存在 但被修改
+                            if (currentBlobId.equals(givenBlobId)) {
+                                //修改内容一致
+                                continue;
+                            } else {
+                                //修改内容不一致
+                                //任何在当前分支和指定分支中以不同方式修改的文件都属于冲突文件。
+                                //TODO(QingZhiLiangCheng)
+                                processConflict(currentCommit, givenCommit, splitCommit);
+                            }
+                        }
+                    }
                 }
-
+            } else {
+                //在当前分支不存在
+                //
             }
 
 
@@ -626,6 +645,9 @@ public class Repository {
         String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
                 headManager.getHead().getBranchName());
         commit(commitMsg);
+    }
+
+    private void processConflict(Commit currentCommit, Commit givenCommit, Commit splitCommit) {
     }
 
 
