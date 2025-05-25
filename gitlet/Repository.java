@@ -309,7 +309,7 @@ public class Repository {
 
 
     /**
-     * TODO(ChengShi, QingZhiLiangCheng): status command
+     * Done[Completed on 2025-05-23](ChengShi, QingZhiLiangCheng): status command
      * <p>
      * Done[Completed on 2025-05-20](ChengShi): 先实现前三部分(Branches, Staged Files, Removed Files)
      * Refactor[Completed on 2025-05-20](QingZhiLiangCheng)
@@ -600,6 +600,12 @@ public class Repository {
                     checkoutFileFromCommitId(givenCommit.getId(), file);
                     addStageManager.save(file, new BlobPointer(givenBlobId));
                 }
+
+
+                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 提交commit
+                String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
+                        headManager.getHead().getBranchName());
+                commit(commitMsg);
             }
         }
     }
