@@ -930,4 +930,13 @@ public class Repository {
     }
 
 
+    /**
+     * Done(QingZhiLiangCheng)
+     */
+    public void addAll() {
+        List<String> workList = workingFilesList();
+        for (String file : workList) {
+            add(file);
+        }
+    }
 }
