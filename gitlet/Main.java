@@ -54,27 +54,29 @@ public class Main {
                 repository.printLog();
                 break;
             case "find":
-                // TODO(ChengShi): 处理 `find [commit message]` 命令
+                // Done(ChengShi): 处理 `find [commit message]` 命令
                 repository.findCommitsByMessage(args[1]);
                 break;
             case "status":
-                // TODO(ChengShi: status): 处理 `status` 命令
+                // Done(ChengShi: status): 处理 `status` 命令
                 repository.showStatus();
                 break;
             case "checkout":
-                // TODO(QingZhiLiangCheng): 处理 `checkout` 命令
+                // Done(QingZhiLiangCheng): 处理 `checkout` 命令
                 repository.checkout(args);
                 break;
             case "branch":
-                // TODO(ChengShi): 处理 `branch [branch name]` 命令
+                // Done(ChengShi): 处理 `branch [branch name]` 命令
                 repository.createBranch(args[1]);
                 break;
             case "rm-branch":
-                // TODO(ChengShi): 处理 `rm-branch [branch name]` 命令
+                // Done(ChengShi): 处理 `rm-branch [branch name]` 命令
                 repository.removeBranch(args[1]);
                 break;
             case "merge":
                 // TODO(QingZhiLiangCheng): 处理 `merge [branch name]` 命令
+                repository.merge(args[1]);
+                break;
             // TODO(QingZhiLiangCheng)[Completed on 2025-05-11]: NO command
             default:
                 System.out.println("No command with that name exists.");

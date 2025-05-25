@@ -562,6 +562,48 @@ public class Repository {
         branchManager.deleteBranch(branch);
     }
 
+    /**
+     * Done[Completed on 2025-05-21](ChengShi):按指定信息寻找commit
+     */
+    public void findCommitsByMessage(String message) {
+        commitManager.findCommitsByMessage(message);
+    }
+
+
+    /**
+     * TODO(QingZhiLiangCheng): 合并分支
+     * 找分割点
+     * 1. 自分割点以来 在给定分支中被修改过，但在当前分支中未被修改过的文件，更改为给定分支的版本，暂存
+     */
+    public void merge(String branchName) {
+        Commit currentCommit = getHeadCommit();
+        Branch givenBranch = branchManager.getBranchFromName(branchName);
+        Commit givenCommit = commitManager.getCommit(givenBranch.getNext());
+        Commit splitCommit = commitManager.getSplitCommit(currentCommit, givenCommit);
+
+        HashMap<String, String> currentBlobMap = currentCommit.getBlobMap();
+        HashMap<String, String> givenBlobMap = givenCommit.getBlobMap();
+        HashMap<String, String> splitBlobMap = splitCommit.getBlobMap();
+
+        Set<String> currentFileNames = currentBlobMap.keySet();
+        Set<String> givenFileNames = givenBlobMap.keySet();
+        Set<String> spiltFileNames = splitBlobMap.keySet();
+
+        for (String file : givenFileNames) {
+            if (currentFileNames.contains(file) && spiltFileNames.contains(file)) {
+                String givenBlobId = givenBlobMap.get(file);
+                String splitBlobId = splitBlobMap.get(file);
+                String currentBlobId = currentBlobMap.get(file);
+
+                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 在给定分支被修改过，在当前分支未被修改
+                if (splitBlobId.equals(currentBlobId) && !splitBlobId.equals(givenBlobId)) {
+                    checkoutFileFromCommitId(givenCommit.getId(), file);
+                    addStageManager.save(file, new BlobPointer(givenBlobId));
+                }
+            }
+        }
+    }
+
 
     /**
      * Done[Completed on 2025-05-17](QingZhiLiangCheng): 打印提交信息
@@ -774,15 +816,6 @@ public class Repository {
         Commit headCommit = getHeadCommit();
         checkoutFileFromCommitId(headCommit.getId(), fileName);
 
-    }
-
-    /**
-     * Done[Completed on 2025-05-21](ChengShi):按指定信息寻找commit
-     *
-     * @param message
-     */
-    public void findCommitsByMessage(String message) {
-        commitManager.findCommitsByMessage(message);
     }
 
 

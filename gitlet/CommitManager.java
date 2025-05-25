@@ -2,9 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gitlet.Repository.OBJECTS_DIR;
 import static gitlet.Utils.*;
@@ -14,7 +12,7 @@ import static gitlet.Utils.*;
  *
  * @author QingZhiLiangCheng
  */
-public class CommitManager implements Serializable{
+public class CommitManager implements Serializable {
     private final File COMMITS_DIR;
 
     CommitManager() {
@@ -40,7 +38,6 @@ public class CommitManager implements Serializable{
         File commitFile = join(COMMITS_DIR, id);
         return readObject(commitFile, Commit.class);
     }
-
 
 
     /**
@@ -118,5 +115,49 @@ public class CommitManager implements Serializable{
         System.out.print("\n");
     }
 
+    /**
+     * Done[Completed on 2025-05-25](QingZhiLiangCheng): 寻找最近公共祖先
+     * 广度优先搜索 + 双向遍历
+     */
+    public Commit getSplitCommit(Commit commitA, Commit commitB) {
+        Deque<Commit> dequeCommitA = new ArrayDeque<>();
+        Deque<Commit> dequeCommitB = new ArrayDeque<>();
+        HashSet<String> visitedCommitA = new HashSet<>();
+        HashSet<String> visitedCommitB = new HashSet<>();
+
+        dequeCommitA.add(commitA);
+        dequeCommitB.add(commitB);
+
+        while (!dequeCommitA.isEmpty() || !dequeCommitB.isEmpty()) {
+            if (!dequeCommitA.isEmpty()) {
+                Commit currA = dequeCommitA.poll();
+                if (visitedCommitB.contains(currA.getId())) {
+                    return currA;
+                }
+                visitedCommitA.add(currA.getId());
+                addParentsToDeque(currA, dequeCommitA);
+            }
+
+            if (!dequeCommitB.isEmpty()) {
+                Commit currB = dequeCommitB.poll();
+                if (visitedCommitA.contains(currB.getId())) {
+                    return currB;
+                }
+                visitedCommitB.add(currB.getId());
+                addParentsToDeque(currB, dequeCommitB);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Done[Completed on 2025-05-25](QingZhiLiangCheng)
+     */
+    private void addParentsToDeque(Commit commit, Deque<Commit> deque) {
+        List<String> parent = commit.getParents();
+        for (String parentId : parent) {
+            deque.add(getCommit(parentId));
+        }
+    }
 }
 
