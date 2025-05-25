@@ -21,7 +21,7 @@ public class Blob implements Serializable {
      * readContentsAsString其实就是调用的readContents 所以我选了String类型<br>
      * <br>
      * id: hash值<br>
-     * filePath: 拼接{@link Repository#COMMIT_DIR}和id 其实我觉得这个属性可有可无<br>
+     * filePath
      */
     private String content;
 

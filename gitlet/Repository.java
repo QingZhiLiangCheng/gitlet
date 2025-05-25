@@ -595,19 +595,29 @@ public class Repository {
                 String splitBlobId = splitBlobMap.get(file);
                 String currentBlobId = currentBlobMap.get(file);
 
+                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 未修改过
+                if (splitBlobId.equals(currentBlobId) && splitBlobId.equals(givenBlobId)) {
+                    continue;
+                }
+
                 //Done[Completed on 2025-05-25](QingZhiLiangCheng) 在给定分支被修改过，在当前分支未被修改
                 if (splitBlobId.equals(currentBlobId) && !splitBlobId.equals(givenBlobId)) {
                     checkoutFileFromCommitId(givenCommit.getId(), file);
                     addStageManager.save(file, new BlobPointer(givenBlobId));
                 }
 
-
-                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 提交commit
-                String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
-                        headManager.getHead().getBranchName());
-                commit(commitMsg);
             }
+            if (!currentFileNames.contains(file) && !spiltFileNames.contains(file)) {
+                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 在给定分支中增加
+                String fileBlobId = givenBlobMap.get(file);
+                addStageManager.save(file,new BlobPointer(fileBlobId));
+            }
+
         }
+        //Done[Completed on 2025-05-25](QingZhiLiangCheng) 提交commit
+        String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
+                headManager.getHead().getBranchName());
+        commit(commitMsg);
     }
 
 
