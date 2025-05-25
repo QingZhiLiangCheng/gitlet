@@ -574,6 +574,7 @@ public class Repository {
      * TODO(QingZhiLiangCheng): 合并分支
      * 找分割点
      * 1. 自分割点以来 在给定分支中被修改过，但在当前分支中未被修改过的文件，更改为给定分支的版本，暂存
+     * 2.
      */
     public void merge(String branchName) {
         Commit currentCommit = getHeadCommit();
