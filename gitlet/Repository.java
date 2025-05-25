@@ -573,8 +573,11 @@ public class Repository {
     /**
      * TODO(QingZhiLiangCheng): 合并分支
      * 找分割点
-     * 1. 自分割点以来 在给定分支中被修改过，但在当前分支中未被修改过的文件，更改为给定分支的版本，暂存
-     * 2.
+     * 1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本，然后，这些文件都将自动暂存
+     * 2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
+     *
+     * 一旦文件按照上述步骤更新，并且拆分点不是当前分支或指定分支，合并操作就会自动提交，并记录日志信息
+     * Merged [given branch name] into [current branch name].
      */
     public void merge(String branchName) {
         Commit currentCommit = getHeadCommit();
@@ -588,33 +591,37 @@ public class Repository {
 
         Set<String> currentFileNames = currentBlobMap.keySet();
         Set<String> givenFileNames = givenBlobMap.keySet();
-        Set<String> spiltFileNames = splitBlobMap.keySet();
+        Set<String> splitFileNames = splitBlobMap.keySet();
 
-        for (String file : givenFileNames) {
-            if (currentFileNames.contains(file) && spiltFileNames.contains(file)) {
-                String givenBlobId = givenBlobMap.get(file);
-                String splitBlobId = splitBlobMap.get(file);
-                String currentBlobId = currentBlobMap.get(file);
+        for (String file : splitFileNames) {
+            //存在于分割点
+            if (currentFileNames.contains(file)) {
+                //在当前分支中存在
 
-                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 未修改过
-                if (splitBlobId.equals(currentBlobId) && splitBlobId.equals(givenBlobId)) {
-                    continue;
-                }
+                if (givenFileNames.contains(file)) {
+                    //在给定分支中存在
+                    String givenBlobId = givenBlobMap.get(file);
+                    String splitBlobId = splitBlobMap.get(file);
+                    String currentBlobId = currentBlobMap.get(file);
 
-                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 在给定分支被修改过，在当前分支未被修改
-                if (splitBlobId.equals(currentBlobId) && !splitBlobId.equals(givenBlobId)) {
-                    checkoutFileFromCommitId(givenCommit.getId(), file);
-                    addStageManager.save(file, new BlobPointer(givenBlobId));
+                    //1. 任何自分割点以来在给定分支中被修改过，但在当前分支中未被修改过的文件，都应更改为其在给定分支中的版本
+                    //Done[Completed on 2025-05-25](QingZhiLiangCheng)
+                    if (splitBlobId.equals(currentBlobId) && !splitBlobId.equals(givenBlobId)) {
+                        checkoutFileFromCommitId(givenCommit.getId(), file);
+                        addStageManager.save(file, new BlobPointer(givenBlobId));
+                    }
+
+                }else {
+                    //2. 任何存在于分割点、在当前分支中未修改、在给定分支中不存在的文件都应被删除（并且不被跟踪）
+                    //Done[Completed on 2025-05-25](QingZhiLiangCheng)
+                    rm(file);
                 }
 
             }
-            if (!currentFileNames.contains(file) && !spiltFileNames.contains(file)) {
-                //Done[Completed on 2025-05-25](QingZhiLiangCheng) 在给定分支中增加
-                String fileBlobId = givenBlobMap.get(file);
-                addStageManager.save(file,new BlobPointer(fileBlobId));
-            }
+
 
         }
+
         //Done[Completed on 2025-05-25](QingZhiLiangCheng) 提交commit
         String commitMsg = String.format("Merge %s into %s.", givenBranch.getBranchName(),
                 headManager.getHead().getBranchName());
