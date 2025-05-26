@@ -654,26 +654,11 @@ public class Repository {
         String commitMsg = String.format("Merge %s into %s.",
                 givenBranch.getBranchName(),
                 headManager.getHead().getBranchName());
-        commitMerge(commitMsg);
+        commit(commitMsg);
     }
 
     /**
-     * Done(QingZhiLiangCheng): 提交
-     */
-    private void commitMerge(String commitMsg) {
-        List<String> addStageFiles = addStageManager.getFiles();
-        List<String> removeStageFiles = removeStageManager.getFiles();
-        Commit headCommit = getHeadCommit();
-        HashMap<String, String> oldHashMap = headCommit.getBlobMap();
-        HashMap<String, String> newHashMap = updateHashMap(oldHashMap, addStageFiles, removeStageFiles);
-        Commit newCommit = new Commit(headCommit, commitMsg, newHashMap);
-        commitManager.saveCommit(newCommit);
-        headManager.updateHead(newCommit.getId());
-        branchManager.updateBranch(headManager.getHead().getBranchName(), newCommit.getId());
-    }
-
-    /**
-     * Done[Completed on 2025-05-25](QingZhiLiangCheng): 处理冲突
+     * TODO(QingZhiLiangCheng): 处理冲突
      */
     private void processConflict(Commit currentCommit, Commit givenCommit, String fileName) {
         String givenBlobId = "";
