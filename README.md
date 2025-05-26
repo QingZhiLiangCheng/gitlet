@@ -81,6 +81,7 @@ java gitlet.Main checkout -- [file name]
 
 java gitlet.Main checkout [commit id] -- [file name]
 
+java gitelt.Main merge [branch name]
 ```
 
 ## Gitlet Design Document
